@@ -1,0 +1,157 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>チュートリアルページ</title>
+<style>
+body,html{margin:0;padding:0;width:100%;height:100%;background:#0f1724;color:#e6eef8;font-family:'Noto Sans JP',sans-serif;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.app{width:90%;max-width:920px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:28px;border-radius:18px;box-shadow:0 10px 30px rgba(2,6,23,0.6);transition:all 0.5s ease;}
+button{cursor:pointer;padding:10px 14px;border-radius:10px;border:0;background:linear-gradient(90deg,#7c3aed,#4f46e5);color:white;font-weight:700;margin:6px;font-size:18px;transition:transform 0.2s;}
+button:hover{transform:scale(1.05);}
+button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:#9aa4b2;font-weight:600;}
+#speedQuizTimer{position:absolute;top:20px;right:20px;font-size:32px;color:#f0f0f0;}
+#speedQuizContainer{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;}
+.quiz-buttons{display:flex;gap:20px;justify-content:center;margin-top:20px;}
+.quiz-buttons button{width:120px;height:60px;font-size:24px;}
+.fade{transition:opacity 1s;}
+</style>
+</head>
+<body>
+
+<div class="app" id="welcomeScreen">
+  <h1 style="opacity:0; transform:translateY(-20px);" id="welcomeTitle">ようこそ<span style="color:#7c3aed">。</span></h1>
+  <div style="opacity:0; transform:translateY(20px);" id="nameDiv">
+    <label>名前:</label>
+    <input type="text" id="nameInput" placeholder="例：太郎" autocomplete="name">
+    <button id="greetBtn">挨拶する</button>
+  </div>
+  <div id="schoolCheck" style="display:none;margin-top:10px;opacity:0; transform:translateY(20px);">
+    <label id="userLabel">user の学校はテスト期間にはいっている？</label>
+    <div style="margin-top:8px;">
+      <button class="ghost" id="yesBtn">はい</button>
+      <button class="ghost" id="noBtn">いいえ</button>
+      <button class="ghost" id="refuseBtn">だが断る</button>
+    </div>
+  </div>
+  <p id="msg" style="margin-top:12px;font-size:20px;opacity:0;"></p>
+</div>
+
+<div id="speedQuizTimer"></div>
+<div id="speedQuizContainer"></div>
+
+<script>
+const nameInput=document.getElementById('nameInput');
+const greetBtn=document.getElementById('greetBtn');
+const schoolCheck=document.getElementById('schoolCheck');
+const userLabel=document.getElementById('userLabel');
+const msg=document.getElementById('msg');
+const welcomeTitle=document.getElementById('welcomeTitle');
+const nameDiv=document.getElementById('nameDiv');
+
+// --- 初期アニメ ---
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{welcomeTitle.style.opacity=1; welcomeTitle.style.transform='translateY(0)';},100);
+  setTimeout(()=>{nameDiv.style.opacity=1; nameDiv.style.transform='translateY(0)';},300);
+  const saved=localStorage.getItem('visitorName');
+  if(saved){ nameInput.value=saved; userLabel.textContent=`${saved} の学校はテスト期間にはいっている？`; schoolCheck.style.display='block'; 
+    setTimeout(()=>{schoolCheck.style.opacity=1; schoolCheck.style.transform='translateY(0)';},100);}
+});
+
+greetBtn.onclick=()=>{
+  const name=nameInput.value.trim();
+  if(!name){ nameInput.focus(); return; }
+  localStorage.setItem('visitorName', name);
+  userLabel.textContent=`${name} の学校はテスト期間にはいっている？`;
+  schoolCheck.style.display='block';
+  setTimeout(()=>{schoolCheck.style.opacity=1; schoolCheck.style.transform='translateY(0)';},50);
+};
+
+// --- はい/いいえ/だが断る ---
+function handleChoice(text,color){
+  msg.textContent=text;
+  msg.style.color=color;
+  msg.style.opacity=0;
+  msg.style.transform='scale(0.6)';
+  msg.style.transition='all 0.6s ease';
+  setTimeout(()=>{ msg.style.opacity=1; msg.style.transform='scale(1)'; },50);
+  setTimeout(()=>{ startSpeedQuizTutorial(); },4000);
+}
+
+document.getElementById('yesBtn').onclick=()=>handleChoice('勉強してください','red');
+document.getElementById('noBtn').onclick=()=>handleChoice('None','white');
+document.getElementById('refuseBtn').onclick=()=>handleChoice('もういいよ','yellow');
+
+// --- 計算画面 ---
+const container=document.getElementById('speedQuizContainer');
+const timerDisplay=document.getElementById('speedQuizTimer');
+let total=0,correct=0,timeLeft=30,timerInterval,timerStarted=false;
+
+function startSpeedQuizTutorial(){
+  // 完全消去
+  document.getElementById('welcomeScreen').style.display='none';
+  msg.style.display='none';
+  container.innerHTML='';
+  timerDisplay.textContent='';
+  // スタートメッセージ
+  const startMsg=document.createElement('p');
+  startMsg.textContent='30秒間計算してみてください';
+  startMsg.style.fontSize='32px';
+  startMsg.style.opacity=0;
+  container.appendChild(startMsg);
+  setTimeout(()=>{ startMsg.style.transition='opacity 1s'; startMsg.style.opacity=1; },50);
+  setTimeout(()=>{ startMsg.style.opacity=0; },3050);
+  setTimeout(()=>{ startSpeedQuiz(); },4100);
+}
+
+// --- 30秒クイズ ---
+function startSpeedQuiz(){
+  container.innerHTML='';
+  total=0; correct=0; timeLeft=30; timerStarted=false;
+  timerDisplay.textContent='30s';
+  showNextQuestion();
+}
+
+function showNextQuestion(){
+  container.innerHTML='';
+  if(timeLeft<=0) return;
+  const a=Math.floor(Math.random()*9)+1;
+  const b=Math.floor(Math.random()*9)+1;
+  const c=Math.floor(Math.random()*9)+1;
+  const ans=a*b*c;
+
+  const q=document.createElement('p');
+  q.textContent=`${a} × ${b} × ${c} = ?`;
+  q.style.fontSize='32px';
+  container.appendChild(q);
+
+  const choices=[ans,ans+Math.floor(Math.random()*5)+1,ans-Math.floor(Math.random()*5)-1].sort(()=>Math.random()-0.5);
+  const btnDiv=document.createElement('div');
+  btnDiv.className='quiz-buttons';
+  choices.forEach(v=>{
+    const btn=document.createElement('button');
+    btn.textContent=v;
+    btn.onclick=()=>{
+      total++;
+      if(v===ans) correct++;
+      if(!timerStarted){
+        timerStarted=true;
+        timerInterval=setInterval(()=>{
+          timeLeft--;
+          timerDisplay.textContent=`${timeLeft}s`;
+          if(timeLeft<=0){
+            clearInterval(timerInterval);
+            container.innerHTML='<p style="font-size:32px;">ストップ！</p>';
+            setTimeout(()=>{ container.innerHTML=`<p style="font-size:28px;">${total}問中 ${correct}問正解でした！</p>`; timerDisplay.textContent=''; },1000);
+          }
+        },1000);
+      }
+      if(timeLeft>0) showNextQuestion();
+    };
+    btnDiv.appendChild(btn);
+  });
+  container.appendChild(btnDiv);
+}
+</script>
+</body>
+</html>
