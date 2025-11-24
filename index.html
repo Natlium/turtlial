@@ -36,20 +36,17 @@
         .shape {
             position: absolute;
             opacity: 0.1;
-            will-change: transform;
             animation: float linear infinite;
         }
         
         .shape.circle {
             border-radius: 50%;
             background: var(--shape-color, #3b82f6);
-            box-shadow: 0 0 20px var(--shape-color);
         }
         
         .shape.square {
             background: var(--shape-color, #3b82f6);
             transform: rotate(45deg);
-            box-shadow: 0 0 15px var(--shape-color);
         }
         
         .shape.triangle {
@@ -59,56 +56,6 @@
             border-left: 50px solid transparent;
             border-right: 50px solid transparent;
             border-bottom: 86px solid var(--shape-color, #3b82f6);
-            filter: drop-shadow(0 0 10px var(--shape-color));
-        }
-        
-        .shape.hexagon {
-            width: 50px;
-            height: 43px;
-            background: var(--shape-color);
-            position: relative;
-            box-shadow: 0 0 15px var(--shape-color);
-        }
-        
-        .shape.hexagon::before,
-        .shape.hexagon::after {
-            content: "";
-            position: absolute;
-            width: 0;
-            border-left: 25px solid transparent;
-            border-right: 25px solid transparent;
-        }
-        
-        .shape.hexagon::before {
-            bottom: 100%;
-            border-bottom: 21.5px solid var(--shape-color);
-        }
-        
-        .shape.hexagon::after {
-            top: 100%;
-            border-top: 21.5px solid var(--shape-color);
-        }
-        
-        .shape.star {
-            width: 0;
-            height: 0;
-            border-left: 30px solid transparent;
-            border-right: 30px solid transparent;
-            border-bottom: 50px solid var(--shape-color);
-            position: relative;
-            filter: drop-shadow(0 0 12px var(--shape-color));
-        }
-        
-        .shape.star::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 0;
-            border-left: 30px solid transparent;
-            border-right: 30px solid transparent;
-            border-top: 50px solid var(--shape-color);
-            top: 15px;
-            left: -30px;
         }
         
         @keyframes float {
@@ -118,35 +65,6 @@
             100% {
                 transform: translateY(-100px) rotate(360deg);
             }
-        }
-        
-        @keyframes float-fast {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-            }
-            100% {
-                transform: translateY(-100px) rotate(1080deg);
-            }
-        }
-        
-        @keyframes float-spin {
-            0% {
-                transform: translateY(100vh) rotate(0deg) scale(1);
-            }
-            50% {
-                transform: translateY(50vh) rotate(720deg) scale(1.5);
-            }
-            100% {
-                transform: translateY(-100px) rotate(1440deg) scale(1);
-            }
-        }
-        
-        .shape.fast-rotate {
-            animation-name: float-fast;
-        }
-        
-        .shape.spin-crazy {
-            animation-name: float-spin;
         }
         
         .container {
@@ -1176,95 +1094,653 @@
     <script>
         // データ構造
         const quizData = {
-            "数学": {
-                "算数": [
-                    {
-                        question: "2 + 2 = ?",
-                        answers: ["3", "4", "5", "6"],
-                        correct: 1
-                    },
-                    {
-                        question: "10 × 5 = ?",
-                        answers: ["50", "40", "60", "55"],
-                        correct: 0
-                    },
-                    {
-                        question: "100 ÷ 4 = ?",
-                        answers: ["20", "25", "30", "35"],
-                        correct: 1
-                    }
-                ],
-                "代数": [
-                    {
-                        question: "x + 5 = 10 のとき、x = ?",
-                        answers: ["3", "4", "5", "6"],
-                        correct: 2
-                    },
-                    {
-                        question: "2x = 8 のとき、x = ?",
-                        answers: ["2", "4", "6", "8"],
-                        correct: 1
-                    }
-                ]
-            },
-            "英語": {
-                "単語": [
-                    {
-                        question: "「こんにちは」を英語で言うと?",
-                        answers: ["Goodbye", "Hello", "Thank you", "Sorry"],
-                        correct: 1
-                    },
-                    {
-                        question: "「犬」を英語で言うと?",
-                        answers: ["Cat", "Dog", "Bird", "Fish"],
-                        correct: 1
-                    },
-                    {
-                        question: "「学校」を英語で言うと?",
-                        answers: ["House", "Hospital", "School", "Store"],
-                        correct: 2
-                    }
-                ],
-                "文法": [
-                    {
-                        question: "I ___ a student. の空欄に入るのは?",
-                        answers: ["is", "am", "are", "be"],
-                        correct: 1
-                    },
-                    {
-                        question: "She ___ to school. の空欄に入るのは?",
-                        answers: ["go", "goes", "going", "went"],
-                        correct: 1
-                    }
-                ]
-            },
-            "理科": {
-                "化学": [
-                    {
-                        question: "水の化学式は?",
-                        answers: ["H2O", "CO2", "O2", "N2"],
-                        correct: 0
-                    },
-                    {
-                        question: "二酸化炭素の化学式は?",
-                        answers: ["H2O", "CO2", "O2", "N2"],
-                        correct: 1
-                    }
-                ],
-                "生物": [
-                    {
-                        question: "光合成を行うのは?",
-                        answers: ["動物", "植物", "菌類", "細菌"],
-                        correct: 1
-                    },
-                    {
-                        question: "人間の骨は何本?",
-                        answers: ["約200本", "約300本", "約400本", "約500本"],
-                        correct: 0
-                    }
-                ]
-            }
-        };
+  "数学": {
+    "算数": [
+      {
+        "question": "2 + 2 = ?",
+        "answers": [
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "10 × 5 = ?",
+        "answers": [
+          "50",
+          "40",
+          "60",
+          "55"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "100 ÷ 4 = ?",
+        "answers": [
+          "20",
+          "25",
+          "30",
+          "35"
+        ],
+        "correct": 1
+      }
+    ],
+    "代数": [
+      {
+        "question": "x + 5 = 10 のとき、x = ?",
+        "answers": [
+          "3",
+          "4",
+          "5",
+          "6"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "2x = 8 のとき、x = ?",
+        "answers": [
+          "2",
+          "4",
+          "6",
+          "8"
+        ],
+        "correct": 1
+      }
+    ],
+    "乗数": [
+      {
+        "question": "2の2乗は？",
+        "answers": [
+          "4",
+          "6",
+          "9",
+          "8"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "3の2乗は？",
+        "answers": [
+          "0",
+          "6",
+          "9",
+          "2"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "4の2乗は？",
+        "answers": [
+          "4",
+          "6",
+          "8",
+          "16"
+        ],
+        "correct": 3
+      }
+    ]
+  },
+  "英語": {
+    "単語": [
+      {
+        "question": "「こんにちは」を英語で言うと?",
+        "answers": [
+          "Goodbye",
+          "Hello",
+          "Thank you",
+          "Sorry"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "「犬」を英語で言うと?",
+        "answers": [
+          "Cat",
+          "Dog",
+          "Bird",
+          "Fish"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "「学校」を英語で言うと?",
+        "answers": [
+          "House",
+          "Hospital",
+          "School",
+          "Store"
+        ],
+        "correct": 2
+      }
+    ],
+    "文法": [
+      {
+        "question": "I ___ a student. の空欄に入るのは?",
+        "answers": [
+          "is",
+          "am",
+          "are",
+          "be"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "She ___ to school. の空欄に入るのは?",
+        "answers": [
+          "go",
+          "goes",
+          "going",
+          "went"
+        ],
+        "correct": 1
+      }
+    ],
+    "test": [
+      {
+        "question": "Pollution",
+        "answers": [
+          "汚染",
+          "教育の",
+          "環境",
+          "注目"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "educational",
+        "answers": [
+          "再利用できる",
+          "教育の",
+          "環境",
+          "注目"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "reusable",
+        "answers": [
+          "再利用できる",
+          "環境",
+          "注目",
+          "環境"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "attention",
+        "answers": [
+          "汚染",
+          "環境",
+          "注目",
+          "教育の"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "environment",
+        "answers": [
+          "再利用できる",
+          "教育の",
+          "汚染",
+          "環境"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "清掃",
+        "answers": [
+          "cleanup",
+          "awareness",
+          "campaign",
+          "destribute"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "配布する",
+        "answers": [
+          "cleanup",
+          "awareness",
+          "destribute",
+          "waste"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "社会運動",
+        "answers": [
+          "waste",
+          "campaign",
+          "destribute",
+          "awareness"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "意識",
+        "answers": [
+          "waste",
+          "awareness",
+          "campaign",
+          "dog"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "ゴミ",
+        "answers": [
+          "waste",
+          "cleanup",
+          "destribute",
+          "awareness"
+        ],
+        "correct": 0
+      }
+    ],
+    "test2": [
+      {
+        "question": "As a ___, we didn't go to the amusement park, <結果として>",
+        "answers": [
+          "result",
+          "amount",
+          "one",
+          "front"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "The ___ ___ plastic waste is getting larger. <~の量>",
+        "answers": [
+          "result of",
+          "time out",
+          "amount of",
+          "in front"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "The books were ____ to the class, <配布された>",
+        "answers": [
+          "distributed",
+          "cause",
+          "waste",
+          "cleanup"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "____ ____ , I met an old friend of mine, <ある日>",
+        "answers": [
+          "in front",
+          "raise rain",
+          "oneday",
+          "make difference"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "A lot of Co2 ____ a ____ in our environment. <問題を引きおこす>",
+        "answers": [
+          "cause | problem",
+          "play | yes",
+          "make | lost",
+          "in | front"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "We have a beautiful bench ____ ____ of our house. <家の前に>",
+        "answers": [
+          "yes for",
+          "in front",
+          "raise yet",
+          "problem the"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "Many sea turtles died ____ of swallowing the waste. <~原因で>",
+        "answers": [
+          "pollution",
+          "waste",
+          "attention",
+          "because"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "You ahould ____ ____ abount plastic pollution. <意識を高める>",
+        "answers": [
+          "in front",
+          "raise awareness",
+          "make difference",
+          "go to"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "We started the campaign to ____ a ____. <変化を持たらす>",
+        "answers": [
+          "make | difference",
+          "raise | start",
+          "in | front",
+          "goat | great"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "The campaign has gained ____ ____.<国際的な注目>",
+        "answers": [
+          "one day",
+          "deip hello",
+          "international attention",
+          "make yes"
+        ],
+        "correct": 2
+      }
+    ],
+    "test3": [
+      {
+        "question": "the woman ___under the tree is my mother.<その木の下に座っている女性は私の母です。>",
+        "answers": [
+          "sits",
+          "sit",
+          "sitting",
+          "sited"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "What is the launage ___ on the island? <その島で反されている言語は何ですか。>",
+        "answers": [
+          "speaks",
+          "speaking",
+          "spoken",
+          "spearted"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "Do you know the boy ___ with Sam? <サムと話している少年を知っていますか。>",
+        "answers": [
+          "talking",
+          "talked",
+          "talks",
+          "talk"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "That girl (dance) on the stage is my sister.<舞台で踊っているあの少女は私の妹です。>",
+        "answers": [
+          "dance>dancing",
+          "dance>dancite",
+          "dance>distance",
+          "dance>drraa"
+        ],
+        "correct": 0
+      }
+    ],
+    "test4": []
+  },
+  "理科": {
+    "化学": [
+      {
+        "question": "水の化学式は?",
+        "answers": [
+          "H2O",
+          "CO2",
+          "O2",
+          "N2"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "二酸化炭素の化学式は?",
+        "answers": [
+          "H2O",
+          "CO2",
+          "O2",
+          "N2"
+        ],
+        "correct": 1
+      }
+    ],
+    "生物": [
+      {
+        "question": "光合成を行うのは?",
+        "answers": [
+          "動物",
+          "植物",
+          "菌類",
+          "細菌"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "人間の骨は何本?",
+        "answers": [
+          "約200本",
+          "約300本",
+          "約400本",
+          "約500本"
+        ],
+        "correct": 0
+      }
+    ]
+  },
+  "工作": {
+    "test": []
+  },
+  "地理": {
+    "テスト１": [
+      {
+        "question": "かつての考え：人口が多いことが○○の増加につながる",
+        "answers": [
+          "下人",
+          "国民",
+          "国人",
+          "愛国心"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "急激な人口増加は発展を妨げるとして両国とも○○○○○○を実施",
+        "answers": [
+          "墾田永年私財法",
+          "人口仰制制作",
+          "人口仰制政策",
+          "人口増加防止策"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "１９７９年から○○○○○○を実施。１夫妻につき子供１人",
+        "answers": [
+          "一人っ子政策",
+          "夫妻子一人政策",
+          "子一人政策",
+          "人口一人防止策"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "戸籍を持たない○○○の増加",
+        "answers": [
+          "黒孩子",
+          "黒死牟",
+          "原子核",
+          "中性子"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "人口抑制成功→極端な少子化による○○○○○○の減少と極端な高齢化",
+        "answers": [
+          "生産平均人口",
+          "生産年齢人口",
+          "年々生産人口",
+          "年代生産人口"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "第一次産業が中心→子供が貴重な○○○であるという考え",
+        "answers": [
+          "労働力",
+          "統率力",
+          "効率化",
+          "促進力"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "伝統的に女性の地位が低い→○○○○への理解が得にくい",
+        "answers": [
+          "国家計画",
+          "国民計画",
+          "SDGｓ",
+          "家族計画"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "合計特殊出生率の高い地域・・・女性の○○○や一人当たりの総生産性が低い",
+        "answers": [
+          "認識力",
+          "認字率",
+          "識字率",
+          "記憶力"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "状況の改善のために：○○○○○○○○○○○/ライツの確立",
+        "answers": [
+          "ダーティーディーズダンダートチープ",
+          "リプロダクティブヘルス",
+          "クリエイティブヘルス",
+          "マイクロチップヘルス"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "女性の○○○○向上に向けた努力",
+        "answers": [
+          "教育標準",
+          "教育水準",
+          "教育平均",
+          "公平教育"
+        ],
+        "correct": 1
+      }
+    ],
+    "テスト２": [
+      {
+        "question": "出生率の低下○○○○○○○が２.1を下回っている",
+        "answers": [
+          "合計特殊出生率",
+          "総合特殊出生率",
+          "合計平均出生率",
+          "統合水準出生率"
+        ],
+        "correct": 0
+      },
+      {
+        "question": "○○○率：総人口に占める６５歳以上人口の割合の増加",
+        "answers": [
+          "少子化",
+          "高齢化",
+          "標齢化",
+          "無人化"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "高齢化率７％を超えると○○○○",
+        "answers": [
+          "高齢化社会",
+          "高齢社会",
+          "少子化社会",
+          "新時代"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "高齢化率が１４％を超えると○○○○○",
+        "answers": [
+          "超高齢化社会",
+          "極高齢社会",
+          "超高齢社会",
+          "独裁者会"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "高福祉・○○○の考え方",
+        "answers": [
+          "高還元",
+          "高負担",
+          "高収入",
+          "高年齢"
+        ],
+        "correct": 1
+      },
+      {
+        "question": "労働力不足を補うために→○○の受け入れを進めている",
+        "answers": [
+          "労力",
+          "政策",
+          "移民",
+          "国民"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "２０１０年代以降○○○○に転じ、同時に少子高齢化も進行",
+        "answers": [
+          "移民減少",
+          "国民減少",
+          "人口減少",
+          "産業減少"
+        ],
+        "correct": 2
+      },
+      {
+        "question": "高齢化の影響：年々○○○○○○○の増大",
+        "answers": [
+          "社会保険料",
+          "国民納税費",
+          "社会給付料",
+          "社会保障給付費"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "若者の○○○○○○の増加",
+        "answers": [
+          "アルバイト・パート",
+          "クレイジーダイヤモンド",
+          "非国民雇用",
+          "非正規雇用"
+        ],
+        "correct": 3
+      },
+      {
+        "question": "労働力不足への政策：○○○○○○の受け入れ条件の緩和",
+        "answers": [
+          "国内労働者",
+          "移民労働者",
+          "外国人労働者",
+          "国民労働者"
+        ],
+        "correct": 2
+      }
+    ]
+  }
+};
         
         // 状態管理
         let currentSubject = "";
@@ -1388,42 +1864,18 @@
         function initBackgroundShapes() {
             const bgShapes = document.getElementById('bgShapes');
             const shapeTypes = ['circle', 'square', 'triangle'];
-            const shapeCount = 60; // 30個から60個に大幅増量
+            const shapeCount = 15;
             
             for (let i = 0; i < shapeCount; i++) {
                 const shape = document.createElement('div');
                 shape.className = `shape ${shapeTypes[Math.floor(Math.random() * shapeTypes.length)]}`;
                 
-                // ランダムで特殊アニメーション（20%の確率）
-                const specialRandom = Math.random();
-                if (specialRandom < 0.1) {
-                    shape.classList.add('fast-rotate'); // 10%で高速回転
-                } else if (specialRandom < 0.2) {
-                    shape.classList.add('spin-crazy'); // 10%で超高速スピン
-                }
-                
-                // サイズのバリエーションを増やす（小さい図形も追加）
-                const size = Math.random() * 100 + 15; // 15px-115px
+                const size = Math.random() * 60 + 30;
                 shape.style.width = size + 'px';
                 shape.style.height = size + 'px';
-                
-                // 横位置をランダムに（より広範囲に）
-                shape.style.left = (Math.random() * 130 - 15) + '%'; // -15%から115%
-                
-                // 不透明度もランダムに（少し濃いめも混ぜる）
-                shape.style.opacity = Math.random() * 0.2 + 0.03; // 0.03-0.23
-                
-                // 特殊アニメーションの場合は速度を調整
-                if (shape.classList.contains('fast-rotate')) {
-                    shape.style.animationDuration = (Math.random() * 5 + 4) + 's'; // 速め
-                } else if (shape.classList.contains('spin-crazy')) {
-                    shape.style.animationDuration = (Math.random() * 4 + 2) + 's'; // 超速
-                } else {
-                    shape.style.animationDuration = (Math.random() * 25 + 10) + 's'; // 通常（10-35秒）
-                }
-                
-                // 開始位置もランダムに（より分散）
-                shape.style.animationDelay = (Math.random() * 15 - 7) + 's'; // -7秒から8秒
+                shape.style.left = Math.random() * 100 + '%';
+                shape.style.animationDuration = (Math.random() * 15 + 10) + 's';
+                shape.style.animationDelay = Math.random() * 5 + 's';
                 
                 bgShapes.appendChild(shape);
             }
