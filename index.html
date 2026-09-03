@@ -1,2370 +1,1374 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>勉強用webサイト</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-            min-height: 100vh;
-            padding: 20px;
-            transition: background 0.5s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        /* 背景アニメーション図形 */
-        .bg-shapes {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-            overflow: hidden;
-        }
-        
-        .shape {
-            position: absolute;
-            opacity: 0.1;
-            animation: float linear infinite;
-        }
-        
-        .shape.circle {
-            border-radius: 50%;
-            background: var(--shape-color, #3b82f6);
-        }
-        
-        .shape.square {
-            background: var(--shape-color, #3b82f6);
-            transform: rotate(45deg);
-        }
-        
-        .shape.triangle {
-            width: 0;
-            height: 0;
-            background: transparent;
-            border-left: 50px solid transparent;
-            border-right: 50px solid transparent;
-            border-bottom: 86px solid var(--shape-color, #3b82f6);
-        }
-        
-        @keyframes float {
-            0% {
-                transform: translateY(100vh) rotate(0deg);
-            }
-            100% {
-                transform: translateY(-100px) rotate(360deg);
-            }
-        }
-        
-        .container {
-            position: relative;
-            z-index: 2;
-        }
-        
-        /* カラーテーマ - 青 */
-        body.theme-blue {
-            --primary-color: #3b82f6;
-            --primary-light: #60a5fa;
-            --primary-lighter: #93c5fd;
-            --primary-dark: #1e40af;
-            --primary-darker: #1e3a8a;
-            --border-color: #2d3561;
-            --bg-dark: #0f1729;
-            --bg-darker: #1a1f3a;
-            --shape-color: #3b82f6;
-            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
-        }
-        
-        /* カラーテーマ - 赤 */
-        body.theme-red {
-            --primary-color: #ef4444;
-            --primary-light: #f87171;
-            --primary-lighter: #fca5a5;
-            --primary-dark: #dc2626;
-            --primary-darker: #991b1b;
-            --border-color: #5d2d2d;
-            --bg-dark: #1a0a0a;
-            --bg-darker: #2d1a1a;
-            --shape-color: #ef4444;
-            background: linear-gradient(135deg, #1a0a0a 0%, #2d1a1a 100%);
-        }
-        
-        /* カラーテーマ - 白黒 */
-        body.theme-mono {
-            --primary-color: #737373;
-            --primary-light: #a3a3a3;
-            --primary-lighter: #d4d4d4;
-            --primary-dark: #525252;
-            --primary-darker: #404040;
-            --border-color: #404040;
-            --bg-dark: #1a1a1a;
-            --bg-darker: #2d2d2d;
-            --shape-color: #737373;
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-        }
-        
-        /* アニメーション品質 */
-        body.anim-low * {
-            animation-duration: 0.1s !important;
-            transition-duration: 0.1s !important;
-        }
-        
-        body.anim-high * {
-            animation-duration: 1s !important;
-            transition-duration: 0.5s !important;
-        }
-        
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            height: calc(100vh - 40px);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-        }
-        
-        /* ポイント表示（左上） */
-        .points-display {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
-            border: 2px solid var(--primary-color);
-            border-radius: 15px;
-            padding: 15px 25px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5), 0 0 20px var(--primary-color);
-            z-index: 900;
-        }
-        
-        .points-display .label {
-            font-size: 0.8em;
-            color: var(--primary-light);
-            margin-bottom: 5px;
-            text-align: center;
-        }
-        
-        .points-display .value {
-            font-size: 1.8em;
-            color: var(--primary-color);
-            font-weight: bold;
-            text-align: center;
-            text-shadow: 0 0 15px var(--primary-color);
-            position: relative;
-        }
-        
-        /* ポイント増加アニメーション */
-        .points-display .point-gain {
-            position: absolute;
-            top: -10px;
-            right: -20px;
-            font-size: 0.7em;
-            color: #34d399;
-            font-weight: bold;
-            animation: point-float 1s ease-out;
-            text-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
-        }
-        
-        @keyframes point-float {
-            0% {
-                opacity: 0;
-                transform: translateY(20px) scale(0.5);
-            }
-            30% {
-                opacity: 1;
-                transform: translateY(0) scale(1.2);
-            }
-            70% {
-                opacity: 1;
-                transform: translateY(-10px) scale(1);
-            }
-            100% {
-                opacity: 0;
-                transform: translateY(-30px) scale(0.8);
-            }
-        }
-        
-        .points-display.flash {
-            animation: point-flash 0.5s ease-out;
-        }
-        
-        @keyframes point-flash {
-            0%, 100% {
-                box-shadow: 0 4px 10px rgba(0,0,0,0.5), 0 0 20px var(--primary-color);
-            }
-            50% {
-                box-shadow: 0 4px 20px rgba(52, 211, 153, 0.8), 0 0 40px rgba(52, 211, 153, 0.6);
-                border-color: #34d399;
-            }
-        }
-        
-        /* メニューボタン */
-        .menu-button {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
-            border: 2px solid var(--primary-color);
-            border-radius: 50%;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.5), 0 0 20px var(--primary-color);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .menu-button span {
-            width: 25px;
-            height: 3px;
-            background: var(--primary-light);
-            border-radius: 2px;
-            box-shadow: 0 0 5px var(--primary-color);
-        }
-        
-        .menu-button:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 15px var(--primary-color), 0 0 30px var(--primary-color);
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-        }
-        
-        .menu-button:active {
-            transform: scale(0.95);
-        }
-        
-        .menu-button.active {
-            animation: menu-pulse 0.3s ease-out;
-        }
-        
-        @keyframes menu-pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.2);
-                box-shadow: 0 6px 20px var(--primary-color), 0 0 40px var(--primary-color);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
-        /* ドロップダウンメニュー */
-        .dropdown-menu {
-            position: fixed;
-            top: 80px;
-            right: 20px;
-            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
-            border: 2px solid var(--border-color);
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5), 0 0 20px var(--primary-color);
-            z-index: 999;
-            display: none;
-            overflow: hidden;
-        }
-        
-        .dropdown-menu button {
-            display: block;
-            width: 200px;
-            padding: 15px 20px;
-            border: none;
-            background: transparent;
-            text-align: left;
-            cursor: pointer;
-            font-size: 1em;
-            border-bottom: 1px solid var(--border-color);
-            transition: all 0.2s ease;
-            position: relative;
-            color: var(--primary-light);
-        }
-        
-        .dropdown-menu button::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            width: 0;
-            background: linear-gradient(90deg, var(--primary-color), transparent);
-            transition: width 0.3s ease;
-        }
-        
-        .dropdown-menu button:hover::before {
-            width: 5px;
-        }
-        
-        .dropdown-menu button:last-child {
-            border-bottom: none;
-        }
-        
-        .dropdown-menu button:hover {
-            background: var(--primary-color);
-            background-opacity: 0.1;
-            padding-left: 25px;
-            color: var(--primary-lighter);
-        }
-        
-        .dropdown-menu button:active {
-            background: var(--primary-color);
-            background-opacity: 0.2;
-            transform: scale(0.98);
-        }
-        
-        /* トグルスイッチ */
-        .toggle-switch {
-            width: 50px;
-            height: 26px;
-            background: var(--bg-dark);
-            border: 2px solid var(--border-color);
-            border-radius: 13px;
-            position: relative;
-            transition: all 0.3s;
-        }
-        
-        .toggle-switch.active {
-            background: var(--primary-dark);
-            border-color: var(--primary-color);
-            box-shadow: 0 0 15px var(--primary-color);
-        }
-        
-        .toggle-slider {
-            width: 22px;
-            height: 22px;
-            background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary-color) 100%);
-            border-radius: 50%;
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            transition: transform 0.3s;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 10px var(--primary-color);
-        }
-        
-        .toggle-slider.active {
-            transform: translateX(24px);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 15px var(--primary-color);
-        }
-        
-        /* 画面 */
-        .screen {
-            display: none;
-            background: linear-gradient(135deg, var(--bg-darker) 0%, var(--bg-dark) 100%);
-            border: 2px solid var(--border-color);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 20px var(--primary-color);
-            padding: 40px;
-            flex: 1;
-            overflow-y: auto;
-        }
-        
-        .screen.active {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        /* タイトル */
-        h1 {
-            text-align: center;
-            color: var(--primary-color);
-            margin-bottom: 40px;
-            font-size: 2.5em;
-            text-shadow: 0 0 20px var(--primary-color);
-        }
-        
-        /* ボタンリスト */
-        .button-list {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 600px;
-            margin: 0 auto;
-            width: 100%;
-        }
-        
-        .main-button {
-            padding: 20px 30px;
-            font-size: 1.3em;
-            border: 2px solid var(--primary-color);
-            border-radius: 10px;
-            cursor: pointer;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
-            color: var(--primary-light);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3), 0 0 20px var(--primary-color);
-            position: relative;
-            overflow: hidden;
-            font-weight: bold;
-        }
-        
-        .main-button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: var(--primary-color);
-            opacity: 0.3;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .main-button:active::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .main-button:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 12px 30px var(--primary-color), 0 0 30px var(--primary-color);
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            color: var(--primary-lighter);
-            border-color: var(--primary-light);
-        }
-        
-        .main-button:active {
-            transform: translateY(-2px) scale(0.98);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        /* クイズ画面 */
-        .quiz-container {
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-        }
-        
-        .question-area {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, var(--bg-dark) 0%, var(--bg-darker) 100%);
-            border: 2px solid var(--border-color);
-            border-radius: 15px;
-            padding: 40px;
-            margin-bottom: 30px;
-            min-height: 300px;
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.3), 0 0 20px var(--primary-color);
-        }
-        
-        .question-text {
-            font-size: 1.8em;
-            color: var(--primary-lighter);
-            text-align: center;
-            line-height: 1.6;
-            text-shadow: 0 0 10px var(--primary-color);
-        }
-        
-        .answer-area {
-            display: flex;
-            gap: 15px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .answer-button {
-            flex: 1;
-            min-width: 200px;
-            padding: 20px;
-            font-size: 1.2em;
-            border: 3px solid var(--primary-color);
-            border-radius: 10px;
-            cursor: pointer;
-            background: linear-gradient(135deg, var(--primary-darker) 0%, var(--bg-dark) 100%);
-            color: var(--primary-light);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            font-weight: bold;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3), 0 0 15px var(--primary-color);
-        }
-        
-        .answer-button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: var(--primary-color);
-            opacity: 0.2;
-            transform: translate(-50%, -50%);
-            transition: width 0.5s, height 0.5s;
-        }
-        
-        .answer-button:active::before {
-            width: 400px;
-            height: 400px;
-        }
-        
-        .answer-button:hover {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            color: var(--primary-lighter);
-            transform: scale(1.05);
-            box-shadow: 0 8px 20px var(--primary-color), 0 0 30px var(--primary-color);
-            border-color: var(--primary-light);
-        }
-        
-        .answer-button:active {
-            transform: scale(0.95);
-        }
-        
-        .answer-button.clicked {
-            animation: answer-click 0.4s ease-out;
-        }
-        
-        @keyframes answer-click {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(0.9);
-                background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-                border-color: var(--primary-color);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-        
-        /* 結果画面 */
-        .result-container {
-            text-align: center;
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .result-score {
-            font-size: 5em;
-            color: var(--primary-color);
-            font-weight: bold;
-            margin: 30px 0;
-            text-shadow: 0 0 30px var(--primary-color);
-        }
-        
-        .result-animation {
-            width: 200px;
-            height: 200px;
-            margin: 20px auto;
-            position: relative;
-        }
-        
-        /* 完璧アニメーション - 花火 */
-        .firework {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        
-        .firework-particle {
-            position: absolute;
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            top: 50%;
-            left: 50%;
-            animation: explode 1.5s ease-out infinite;
-        }
-        
-        .firework-particle:nth-child(1) { background: #ff6b6b; animation-delay: 0s; transform: rotate(0deg); }
-        .firework-particle:nth-child(2) { background: #4ecdc4; animation-delay: 0.1s; transform: rotate(45deg); }
-        .firework-particle:nth-child(3) { background: #ffe66d; animation-delay: 0.2s; transform: rotate(90deg); }
-        .firework-particle:nth-child(4) { background: #95e1d3; animation-delay: 0.3s; transform: rotate(135deg); }
-        .firework-particle:nth-child(5) { background: #ff8b94; animation-delay: 0.4s; transform: rotate(180deg); }
-        .firework-particle:nth-child(6) { background: #a8e6cf; animation-delay: 0.5s; transform: rotate(225deg); }
-        .firework-particle:nth-child(7) { background: #ffd3b6; animation-delay: 0.6s; transform: rotate(270deg); }
-        .firework-particle:nth-child(8) { background: #ffaaa5; animation-delay: 0.7s; transform: rotate(315deg); }
-        
-        @keyframes explode {
-            0% {
-                transform: translate(-50%, -50%) translateY(0) scale(0);
-                opacity: 1;
-            }
-            50% {
-                opacity: 1;
-            }
-            100% {
-                transform: translate(-50%, -50%) translateY(-80px) scale(1);
-                opacity: 0;
-            }
-        }
-        
-        /* 素晴らしいアニメーション - 星 */
-        .stars {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
-        
-        .star {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            animation: twinkle 1.5s ease-in-out infinite;
-        }
-        
-        .star:nth-child(1) { top: 20%; left: 50%; animation-delay: 0s; }
-        .star:nth-child(2) { top: 40%; left: 20%; animation-delay: 0.3s; }
-        .star:nth-child(3) { top: 40%; left: 80%; animation-delay: 0.6s; }
-        .star:nth-child(4) { top: 70%; left: 35%; animation-delay: 0.9s; }
-        .star:nth-child(5) { top: 70%; left: 65%; animation-delay: 1.2s; }
-        
-        .star::before,
-        .star::after {
-            content: '';
-            position: absolute;
-            background: #ffd700;
-            top: 50%;
-            left: 50%;
-        }
-        
-        .star::before {
-            width: 40px;
-            height: 8px;
-            transform: translate(-50%, -50%);
-        }
-        
-        .star::after {
-            width: 8px;
-            height: 40px;
-            transform: translate(-50%, -50%);
-        }
-        
-        @keyframes twinkle {
-            0%, 100% {
-                transform: scale(0.8) rotate(0deg);
-                opacity: 0.6;
-            }
-            50% {
-                transform: scale(1.2) rotate(180deg);
-                opacity: 1;
-            }
-        }
-        
-        /* 良くできましたアニメーション - いいねサムズアップ */
-        .thumbs-up {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        
-        .thumb {
-            width: 100px;
-            height: 120px;
-            background: #667eea;
-            border-radius: 20px 20px 50px 50px;
-            position: relative;
-            animation: bounce 0.8s ease-in-out infinite;
-        }
-        
-        .thumb::before {
-            content: '';
-            position: absolute;
-            width: 60px;
-            height: 40px;
-            background: #667eea;
-            border-radius: 20px 20px 0 0;
-            top: -30px;
-            left: 20px;
-            transform: rotate(-45deg);
-        }
-        
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0) scale(1);
-            }
-            50% {
-                transform: translateY(-20px) scale(1.1);
-            }
-        }
-        
-        /* もう少し頑張りましょうアニメーション - 筋肉 */
-        .muscle {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: relative;
-        }
-        
-        .arm {
-            width: 80px;
-            height: 100px;
-            background: #ff9a9e;
-            border-radius: 40px;
-            position: relative;
-            animation: flex 1s ease-in-out infinite;
-        }
-        
-        .bicep {
-            position: absolute;
-            width: 50px;
-            height: 50px;
-            background: #ff6b6b;
-            border-radius: 50%;
-            top: 20px;
-            left: 15px;
-            animation: grow 1s ease-in-out infinite;
-        }
-        
-        @keyframes flex {
-            0%, 100% {
-                transform: rotate(-20deg);
-            }
-            50% {
-                transform: rotate(-40deg);
-            }
-        }
-        
-        @keyframes grow {
-            0%, 100% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.3);
-            }
-        }
-        
-        /* ポイント獲得アニメーション */
-        .point-notification {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: linear-gradient(135deg, #1e40af 0%, #1e3a8a 100%);
-            border: 3px solid #3b82f6;
-            border-radius: 20px;
-            padding: 30px 50px;
-            font-size: 2em;
-            color: #60a5fa;
-            font-weight: bold;
-            z-index: 2000;
-            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.5), 0 0 60px rgba(59, 130, 246, 0.4);
-            animation: point-popup 1s ease-out;
-            pointer-events: none;
-            display: none;
-        }
-        
-        @keyframes point-popup {
-            0% {
-                transform: translate(-50%, -50%) scale(0);
-                opacity: 0;
-            }
-            50% {
-                transform: translate(-50%, -50%) scale(1.2);
-                opacity: 1;
-            }
-            70% {
-                transform: translate(-50%, -50%) scale(1);
-            }
-            100% {
-                transform: translate(-50%, -80%) scale(0.8);
-                opacity: 0;
-            }
-        }
-        
-        .result-buttons {
-            display: flex;
-            gap: 20px;
-            margin-top: 40px;
-        }
-        
-        .result-button {
-            padding: 15px 40px;
-            font-size: 1.2em;
-            border: 2px solid var(--primary-color);
-            border-radius: 10px;
-            cursor: pointer;
-            background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-darker) 100%);
-            color: var(--primary-light);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-            font-weight: bold;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3), 0 0 15px var(--primary-color);
-        }
-        
-        .result-button::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: var(--primary-color);
-            opacity: 0.3;
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
-        }
-        
-        .result-button:active::before {
-            width: 300px;
-            height: 300px;
-        }
-        
-        .result-button:hover {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 8px 20px var(--primary-color), 0 0 30px var(--primary-color);
-            color: var(--primary-lighter);
-            border-color: var(--primary-light);
-        }
-        
-        .result-button:active {
-            transform: translateY(-2px) scale(0.98);
-        }
-        
-        .progress-info {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 1.2em;
-            color: var(--primary-light);
-            text-shadow: 0 0 10px var(--primary-color);
-        }
-        
-        /* モバイルモード */
-        body.mobile-mode .container {
-            padding: 0;
-        }
-        
-        body.mobile-mode .screen {
-            border-radius: 0;
-            padding: 20px;
-            height: 100vh;
-        }
-        
-        body.mobile-mode .question-area {
-            padding: 20px;
-            min-height: 200px;
-        }
-        
-        body.mobile-mode .question-text {
-            font-size: 1.3em;
-        }
-        
-        body.mobile-mode .answer-area {
-            flex-direction: column;
-        }
-        
-        body.mobile-mode .answer-button {
-            min-width: 100%;
-            font-size: 1em;
-        }
-        
-        body.mobile-mode .main-button {
-            font-size: 1.1em;
-            padding: 15px 20px;
-        }
-        
-        body.mobile-mode h1 {
-            font-size: 1.8em;
-        }
-        
-        body.mobile-mode .result-score {
-            font-size: 3.5em;
-        }
-        
-        body.mobile-mode .result-buttons {
-            flex-direction: column;
-            width: 100%;
-        }
-        
-        body.mobile-mode .result-button {
-            width: 100%;
-        }
-        
-        body.mobile-mode .points-display {
-            top: 10px;
-            left: 10px;
-            padding: 10px 20px;
-        }
-        
-        body.mobile-mode .points-display .label {
-            font-size: 0.7em;
-        }
-        
-        body.mobile-mode .points-display .value {
-            font-size: 1.5em;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>屋台 注文システム</title>
+<style>
+  * { box-sizing: border-box; }
+  :root { --font-scale: 1; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+    background: #fdf6ec;
+    color: #2c2c2a;
+    padding-bottom: 100px;
+    font-size: calc(1em * var(--font-scale));
+  }
+  header {
+    background: #d85a30;
+    color: #fff;
+    padding: 14px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+  header .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  header h1 {
+    font-size: 17px;
+    font-weight: 500;
+    margin: 0;
+  }
+  .settings-btn {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: #fff;
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .mode-toggle {
+    display: flex;
+    background: rgba(255,255,255,0.2);
+    border-radius: 8px;
+    padding: 2px;
+    margin-top: 10px;
+  }
+  .mode-toggle button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    color: #fff;
+    padding: 7px 6px;
+    font-size: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .mode-toggle button.active {
+    background: #fff;
+    color: #d85a30;
+    font-weight: 500;
+  }
+  main {
+    padding: 16px;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .section-title {
+    font-size: 15px;
+    font-weight: 500;
+    margin: 20px 0 10px;
+    color: #712b13;
+  }
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  .product-card {
+    background: #fff;
+    border: 0.5px solid #e6ddd0;
+    border-radius: 12px;
+    padding: 10px;
+    position: relative;
+    text-align: center;
+  }
+  .product-card img {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 8px;
+    background: #f1efe8;
+  }
+  .product-card .noimg {
+    width: 100%;
+    height: 90px;
+    border-radius: 8px;
+    background: #f1efe8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #b4b2a9;
+    font-size: 12px;
+  }
+  .product-card .name {
+    font-size: 13px;
+    font-weight: 500;
+    margin: 8px 0 2px;
+  }
+  .product-card .maxnum {
+    font-size: 11px;
+    color: #888780;
+  }
+  .del-btn {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    background: rgba(0,0,0,0.55);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    font-size: 13px;
+    line-height: 1;
+    cursor: pointer;
+  }
+  .qty-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  .qty-row button {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    border: 0.5px solid #d3d1c7;
+    background: #fff;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .qty-row span {
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 20px;
+    text-align: center;
+  }
+  .add-form, .room-box, .settings-box {
+    background: #fff;
+    border: 0.5px solid #e6ddd0;
+    border-radius: 12px;
+    padding: 14px;
+    margin-top: 16px;
+  }
+  .add-form label, .settings-box label {
+    display: block;
+    font-size: 12px;
+    color: #5f5e5a;
+    margin: 10px 0 4px;
+  }
+  .add-form input, .settings-box input, .room-box input {
+    width: 100%;
+    height: 36px;
+    border-radius: 8px;
+    border: 0.5px solid #d3d1c7;
+    padding: 0 10px;
+    font-size: 14px;
+  }
+  .add-form button.submit, .settings-box button.submit {
+    width: 100%;
+    margin-top: 14px;
+    height: 40px;
+    border-radius: 8px;
+    border: none;
+    background: #d85a30;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .room-box { margin-top: 0; margin-bottom: 16px; }
+  .room-box label { margin-top: 0; }
+  .room-box input { height: 40px; font-size: 16px; }
+  .congestion-banner {
+    background: #faeeda;
+    border: 0.5px solid #ef9f27;
+    color: #633806;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 13px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .congestion-banner .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #ef9f27;
+    flex-shrink: 0;
+  }
+  .fontsize-toast {
+    position: fixed;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #26215c;
+    color: #fff;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    max-width: 88%;
+    text-align: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s;
+    z-index: 150;
+  }
+  .fontsize-toast.show { opacity: 1; }
+  .fontsize-toast a {
+    color: #cecbf6;
+    text-decoration: underline;
+    margin-left: 4px;
+  }
+  .font-size-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .font-size-row input[type="range"] {
+    flex: 1;
+  }
+  .font-size-row span {
+    font-size: 12px;
+    color: #5f5e5a;
+    min-width: 38px;
+    text-align: right;
+  }
+  .send-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #fff;
+    border-top: 0.5px solid #e6ddd0;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 480px;
+    margin: 0 auto;
+  }
+  .send-bar .total {
+    font-size: 13px;
+    color: #5f5e5a;
+  }
+  .send-bar button {
+    background: #d85a30;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .send-bar button:disabled {
+    background: #d3d1c7;
+    cursor: not-allowed;
+  }
+  .empty-msg {
+    text-align: center;
+    color: #888780;
+    font-size: 13px;
+    padding: 30px 0;
+  }
+  .toast {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #26215c;
+    color: #fff;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    z-index: 100;
+    max-width: 90%;
+    text-align: center;
+  }
+  .toast.show { opacity: 1; }
+  .error-text {
+    color: #a32d2d;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+  .hint-text {
+    color: #888780;
+    font-size: 11px;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .order-card {
+    background: #fff;
+    border: 0.5px solid #e6ddd0;
+    border-left: 4px solid #ef9f27;
+    border-radius: 12px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .order-card .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+  }
+  .order-card .room {
+    font-size: 16px;
+    font-weight: 500;
+  }
+  .order-card .time {
+    font-size: 12px;
+    color: #888780;
+  }
+  .item-list {
+    list-style: none;
+    margin: 0 0 12px;
+    padding: 0;
+  }
+  .item-list li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    padding: 4px 0;
+    border-bottom: 0.5px dashed #e6ddd0;
+  }
+  .item-list li:last-child { border-bottom: none; }
+  .item-list .item-qty { font-weight: 500; color: #712b13; }
+  .action-row { display: flex; gap: 8px; }
+  .action-row button {
+    flex: 1;
+    height: 38px;
+    border-radius: 8px;
+    border: none;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn-done { background: #639922; color: #fff; }
+  .btn-shortage { background: #a32d2d; color: #fff; }
+  .log-card {
+    background: #fff;
+    border: 0.5px solid #e6ddd0;
+    border-radius: 12px;
+    padding: 12px 14px;
+    margin-bottom: 10px;
+  }
+  .log-card .top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .log-status {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+  .log-status.done { background: #eaf3de; color: #27500a; }
+  .log-status.shortage { background: #fcebeb; color: #501313; }
+  .log-items { font-size: 13px; color: #5f5e5a; }
+  .subtabs {
+    display: flex;
+    background: #fff;
+    border: 0.5px solid #e6ddd0;
+    border-radius: 8px;
+    padding: 2px;
+    margin-bottom: 14px;
+  }
+  .subtabs button {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px;
+    font-size: 12px;
+    color: #5f5e5a;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .subtabs button.active {
+    background: #0f6e56;
+    color: #fff;
+    font-weight: 500;
+  }
+  .badge-count {
+    background: #a32d2d;
+    color: #fff;
+    border-radius: 10px;
+    font-size: 10px;
+    padding: 1px 6px;
+    margin-left: 4px;
+  }
+  .sync-status {
+    font-size: 11px;
+    color: rgba(255,255,255,0.85);
+    margin-top: 6px;
+    text-align: center;
+  }
+  .modal-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px 16px;
+    overflow-y: auto;
+    font-size: 16px;
+  }
+  .modal-box {
+    background: #fff;
+    border-radius: 12px;
+    padding: 18px;
+    max-width: 420px;
+    width: 100%;
+    margin-top: 20px;
+  }
+  .modal-box h2 {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0 0 12px;
+  }
+  .modal-close-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .modal-close-row button {
+    flex: 1;
+    height: 38px;
+    border-radius: 8px;
+    border: 0.5px solid #d3d1c7;
+    background: #fff;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .modal-close-row button.primary {
+    background: #d85a30;
+    color: #fff;
+    border: none;
+    font-weight: 500;
+  }
+</style>
 </head>
 <body>
-    <div class="container">
-        <!-- 背景アニメーション図形 -->
-        <div class="bg-shapes" id="bgShapes"></div>
-        
-        <!-- ポイント表示（左上） -->
-        <div class="points-display">
-            <div class="label">総ポイント</div>
-            <div class="value" id="pointsDisplayValue">0</div>
-        </div>
-        
-        <!-- メニューボタン -->
-        <button class="menu-button" id="menuButton" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
-        
-        <!-- ドロップダウンメニュー -->
-        <div class="dropdown-menu" id="dropdownMenu">
-            <div style="padding: 15px 20px; background: rgba(59, 130, 246, 0.1); border-bottom: 2px solid #2d3561;">
-                <div style="text-align: center;">
-                    <div style="font-size: 0.9em; color: #60a5fa; margin-bottom: 5px;">総ポイント</div>
-                    <div style="font-size: 1.8em; color: #3b82f6; font-weight: bold; text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);" id="totalPoints">0</div>
-                </div>
-            </div>
-            <button onclick="showUserInfo()" id="menuUserInfo">ユーザー情報</button>
-            <button onclick="showSettings()" id="menuSettings">詳細な設定</button>
-            <button onclick="goToMainMenu()" id="menuToMain">教科選択に戻る</button>
-            <button onclick="goToSubjectMenu()" id="menuToTopic">科目選択に戻る</button>
-            <button onclick="skipQuestion()" id="menuSkip">この問題をスキップ</button>
-            <div style="padding: 15px 20px; border-top: 2px solid #2d3561;">
-                <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
-                    <span style="font-weight: bold; color: #3b82f6; text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);">表示モード</span>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span id="modeLabel" style="font-size: 0.9em; color: #60a5fa;">PC</span>
-                        <div class="toggle-switch" onclick="toggleMode(event)">
-                            <div class="toggle-slider" id="toggleSlider"></div>
-                        </div>
-                    </div>
-                </label>
-            </div>
-        </div>
-        
-        <!-- メイン画面 (教科選択) -->
-        <div class="screen active" id="mainScreen">
-            <h1>📚 勉強用webサイト</h1>
-            <div class="button-list" id="subjectList"></div>
-        </div>
-        
-        <!-- 科目選択画面 -->
-        <div class="screen" id="topicScreen">
-            <h1 id="topicTitle">科目選択</h1>
-            <div class="button-list" id="topicList"></div>
-        </div>
-        
-        <!-- クイズ画面 -->
-        <div class="screen" id="quizScreen">
-            <div class="quiz-container">
-                <div class="progress-info" id="progressInfo"></div>
-                <div class="question-area">
-                    <div class="question-text" id="questionText"></div>
-                </div>
-                <div class="answer-area" id="answerArea"></div>
-            </div>
-        </div>
-        
-        <!-- 結果画面 -->
-        <div class="screen" id="resultScreen">
-            <div class="result-container">
-                <h1>結果発表</h1>
-                <div class="result-animation" id="resultAnimation"></div>
-                <div class="result-score" id="resultScore"></div>
-                <p id="resultMessage" style="font-size: 1.5em; color: #60a5fa; text-shadow: 0 0 10px rgba(59, 130, 246, 0.3);"></p>
-                <div class="result-buttons">
-                    <button class="result-button" onclick="retryQuiz()">もう一度</button>
-                    <button class="result-button" onclick="goToMainMenu()">メニュー画面へ</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- ユーザー情報画面 -->
-        <div class="screen" id="userInfoScreen">
-            <h1>ユーザー情報</h1>
-            <div style="max-width: 800px; margin: 0 auto;">
-                
-                <!-- 統計情報 -->
-                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">📊 統計情報</h2>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
-                        <div style="text-align: center; padding: 20px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
-                            <div style="font-size: 0.9em; color: #60a5fa; margin-bottom: 10px;">総ポイント</div>
-                            <div style="font-size: 2.5em; color: #3b82f6; font-weight: bold; text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);" id="userTotalPoints">0</div>
-                        </div>
-                        <div style="text-align: center; padding: 20px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
-                            <div style="font-size: 0.9em; color: #60a5fa; margin-bottom: 10px;">解いた問題数</div>
-                            <div style="font-size: 2.5em; color: #3b82f6; font-weight: bold; text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);" id="userTotalAnswered">0</div>
-                        </div>
-                        <div style="text-align: center; padding: 20px; background: rgba(59, 130, 246, 0.1); border-radius: 10px;">
-                            <div style="font-size: 0.9em; color: #60a5fa; margin-bottom: 10px;">正解率</div>
-                            <div style="font-size: 2.5em; color: #3b82f6; font-weight: bold; text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);" id="userAccuracy">0%</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- 問題ログ -->
-                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">📝 最近の履歴</h2>
-                    <div id="questionLog" style="max-height: 300px; overflow-y: auto;">
-                        <!-- ログがここに表示される -->
-                    </div>
-                </div>
-                
-                <!-- データ管理 -->
-                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">⚙️ データ管理</h2>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                        <button class="result-button" onclick="clearAllData()" style="background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%); border-color: #ef4444;">全データをリセット</button>
-                        <button class="result-button" onclick="goToMainMenu()">メニュー画面へ戻る</button>
-                    </div>
-                </div>
-                
-            </div>
-        </div>
-        
-        <!-- 設定画面 -->
-        <div class="screen" id="settingsScreen">
-            <h1>⚙️ 詳細な設定</h1>
-            <div style="max-width: 800px; margin: 0 auto;">
-                
-                <!-- GUIアニメーション設定 -->
-                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">🎬 GUIアニメーション</h2>
-                    <p style="color: #60a5fa; margin-bottom: 15px;">アニメーションの品質を設定します</p>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                        <button class="result-button" onclick="setAnimationQuality('low')" id="animLow">最低</button>
-                        <button class="result-button" onclick="setAnimationQuality('standard')" id="animStandard">標準</button>
-                        <button class="result-button" onclick="setAnimationQuality('high')" id="animHigh">最高</button>
-                    </div>
-                    <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px;">
-                        <p style="color: #60a5fa; font-size: 0.9em; margin: 0;">現在: <span id="currentAnim" style="color: #3b82f6; font-weight: bold;">標準</span></p>
-                    </div>
-                </div>
-                
-                <!-- GUIカラー設定 -->
-                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">🎨 GUIカラー</h2>
-                    <p style="color: #60a5fa; margin-bottom: 15px;">テーマカラーを変更します</p>
-                    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
-                        <button class="result-button" onclick="setColorTheme('blue')" id="colorBlue">黒青</button>
-                        <button class="result-button" onclick="setColorTheme('red')" id="colorRed">黒赤</button>
-                        <button class="result-button" onclick="setColorTheme('mono')" id="colorMono">白黒</button>
-                    </div>
-                    <div style="margin-top: 15px; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px;">
-                        <p style="color: #60a5fa; font-size: 0.9em; margin: 0;">現在: <span id="currentColor" style="color: #3b82f6; font-weight: bold;">黒青</span></p>
-                    </div>
-                </div>
-                
-                <!-- 省GB設定 -->
-                <div style="background: linear-gradient(135deg, #0f1729 0%, #1a1f3a 100%); border: 2px solid #2d3561; border-radius: 15px; padding: 30px; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
-                    <h2 style="color: #3b82f6; margin-bottom: 20px; text-shadow: 0 0 10px rgba(59, 130, 246, 0.5);">💾 省GB設定</h2>
-                    <p style="color: #60a5fa; margin-bottom: 15px;">メモリ使用量を削減します（履歴を制限）</p>
-                    <label style="display: flex; align-items: center; gap: 15px; cursor: pointer; padding: 15px; background: rgba(59, 130, 246, 0.05); border-radius: 8px;">
-                        <div class="toggle-switch" onclick="toggleLowMemory(event)">
-                            <div class="toggle-slider" id="lowMemorySlider"></div>
-                        </div>
-                        <span style="color: #60a5fa; font-weight: bold;">省GB設定: <span id="lowMemoryStatus" style="color: #3b82f6;">OFF</span></span>
-                    </label>
-                    <p style="color: #60a5fa; font-size: 0.85em; margin-top: 10px;">ONにすると履歴が最新10件のみ保存されます</p>
-                </div>
-                
-                <!-- 戻るボタン -->
-                <div style="text-align: center;">
-                    <button class="result-button" onclick="goToMainMenu()">メニュー画面へ戻る</button>
-                </div>
-                
-            </div>
-        </div>
+
+<header>
+  <div class="top-row">
+    <h1>屋台 注文システム</h1>
+    <div style="display:flex; gap:6px;">
+      <button class="settings-btn" id="displaySettingsBtn">表示設定</button>
+      <button class="settings-btn" id="opSettingsBtn">運営設定</button>
+    </div>
+  </div>
+  <div class="mode-toggle">
+    <button id="modeOrderBtn" class="active">注文</button>
+    <button id="modeOpBtn">商品管理</button>
+    <button id="modeReceiveBtn">受信 <span class="badge-count" id="pendingBadge" style="display:none;">0</span></button>
+  </div>
+  <div class="sync-status" id="syncStatus">未設定</div>
+</header>
+
+<main>
+
+  <!-- 注文モード -->
+  <div id="orderMode">
+    <div class="congestion-banner" id="congestionBanner" style="display:none;">
+      <span class="dot"></span>
+      <span id="congestionText">現在混んでいます。お受け取りまでお時間をいただく場合があります。</span>
+    </div>
+    <div class="room-box">
+      <label for="roomInput">部屋番号</label>
+      <input type="text" id="roomInput" placeholder="例: 12" inputmode="numeric">
+      <div class="error-text" id="roomError" style="display:none;"></div>
     </div>
 
-    <script>
-        // データ構造
-        const quizData = {
-  "数学": {
-    "算数": [
-      {
-        "question": "2 + 2 = ?",
-        "answers": [
-          "3",
-          "4",
-          "5",
-          "6"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "10 × 5 = ?",
-        "answers": [
-          "50",
-          "40",
-          "60",
-          "55"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "100 ÷ 4 = ?",
-        "answers": [
-          "20",
-          "25",
-          "30",
-          "35"
-        ],
-        "correct": 1
-      }
-    ],
-    "代数": [
-      {
-        "question": "x + 5 = 10 のとき、x = ?",
-        "answers": [
-          "3",
-          "4",
-          "5",
-          "6"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "2x = 8 のとき、x = ?",
-        "answers": [
-          "2",
-          "4",
-          "6",
-          "8"
-        ],
-        "correct": 1
-      }
-    ],
-    "乗数": [
-      {
-        "question": "2の2乗は？",
-        "answers": [
-          "4",
-          "6",
-          "9",
-          "8"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "3の2乗は？",
-        "answers": [
-          "0",
-          "6",
-          "9",
-          "2"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "4の2乗は？",
-        "answers": [
-          "4",
-          "6",
-          "8",
-          "16"
-        ],
-        "correct": 3
-      }
-    ]
-  },
-  "英語": {
-    "単語": [
-      {
-        "question": "「こんにちは」を英語で言うと?",
-        "answers": [
-          "Goodbye",
-          "Hello",
-          "Thank you",
-          "Sorry"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "「犬」を英語で言うと?",
-        "answers": [
-          "Cat",
-          "Dog",
-          "Bird",
-          "Fish"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "「学校」を英語で言うと?",
-        "answers": [
-          "House",
-          "Hospital",
-          "School",
-          "Store"
-        ],
-        "correct": 2
-      }
-    ],
-    "文法": [
-      {
-        "question": "I ___ a student. の空欄に入るのは?",
-        "answers": [
-          "is",
-          "am",
-          "are",
-          "be"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "She ___ to school. の空欄に入るのは?",
-        "answers": [
-          "go",
-          "goes",
-          "going",
-          "went"
-        ],
-        "correct": 1
-      }
-    ],
-    "test": [
-      {
-        "question": "Pollution",
-        "answers": [
-          "汚染",
-          "教育の",
-          "環境",
-          "注目"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "educational",
-        "answers": [
-          "再利用できる",
-          "教育の",
-          "環境",
-          "注目"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "reusable",
-        "answers": [
-          "再利用できる",
-          "環境",
-          "注目",
-          "環境"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "attention",
-        "answers": [
-          "汚染",
-          "環境",
-          "注目",
-          "教育の"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "environment",
-        "answers": [
-          "再利用できる",
-          "教育の",
-          "汚染",
-          "環境"
-        ],
-        "correct": 3
-      },
-      {
-        "question": "清掃",
-        "answers": [
-          "cleanup",
-          "awareness",
-          "campaign",
-          "destribute"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "配布する",
-        "answers": [
-          "cleanup",
-          "awareness",
-          "destribute",
-          "waste"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "社会運動",
-        "answers": [
-          "waste",
-          "campaign",
-          "destribute",
-          "awareness"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "意識",
-        "answers": [
-          "waste",
-          "awareness",
-          "campaign",
-          "dog"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "ゴミ",
-        "answers": [
-          "waste",
-          "cleanup",
-          "destribute",
-          "awareness"
-        ],
-        "correct": 0
-      }
-    ],
-    "test2": [
-      {
-        "question": "As a ___, we didn't go to the amusement park, <結果として>",
-        "answers": [
-          "result",
-          "amount",
-          "one",
-          "front"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "The ___ ___ plastic waste is getting larger. <~の量>",
-        "answers": [
-          "result of",
-          "time out",
-          "amount of",
-          "in front"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "The books were ____ to the class, <配布された>",
-        "answers": [
-          "distributed",
-          "cause",
-          "waste",
-          "cleanup"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "____ ____ , I met an old friend of mine, <ある日>",
-        "answers": [
-          "in front",
-          "raise rain",
-          "oneday",
-          "make difference"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "A lot of Co2 ____ a ____ in our environment. <問題を引きおこす>",
-        "answers": [
-          "cause | problem",
-          "play | yes",
-          "make | lost",
-          "in | front"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "We have a beautiful bench ____ ____ of our house. <家の前に>",
-        "answers": [
-          "yes for",
-          "in front",
-          "raise yet",
-          "problem the"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "Many sea turtles died ____ of swallowing the waste. <~原因で>",
-        "answers": [
-          "pollution",
-          "waste",
-          "attention",
-          "because"
-        ],
-        "correct": 3
-      },
-      {
-        "question": "You ahould ____ ____ abount plastic pollution. <意識を高める>",
-        "answers": [
-          "in front",
-          "raise awareness",
-          "make difference",
-          "go to"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "We started the campaign to ____ a ____. <変化を持たらす>",
-        "answers": [
-          "make | difference",
-          "raise | start",
-          "in | front",
-          "goat | great"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "The campaign has gained ____ ____.<国際的な注目>",
-        "answers": [
-          "one day",
-          "deip hello",
-          "international attention",
-          "make yes"
-        ],
-        "correct": 2
-      }
-    ],
-    "test3": [
-      {
-        "question": "the woman ___under the tree is my mother.<その木の下に座っている女性は私の母です。>",
-        "answers": [
-          "sits",
-          "sit",
-          "sitting",
-          "sited"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "What is the launage ___ on the island? <その島で反されている言語は何ですか。>",
-        "answers": [
-          "speaks",
-          "speaking",
-          "spoken",
-          "spearted"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "Do you know the boy ___ with Sam? <サムと話している少年を知っていますか。>",
-        "answers": [
-          "talking",
-          "talked",
-          "talks",
-          "talk"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "That girl (dance) on the stage is my sister.<舞台で踊っているあの少女は私の妹です。>",
-        "answers": [
-          "dance>dancing",
-          "dance>dancite",
-          "dance>distance",
-          "dance>drraa"
-        ],
-        "correct": 0
-      }
-    ],
-    "test4": []
-  },
-  "理科": {
-    "化学": [
-      {
-        "question": "水の化学式は?",
-        "answers": [
-          "H2O",
-          "CO2",
-          "O2",
-          "N2"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "二酸化炭素の化学式は?",
-        "answers": [
-          "H2O",
-          "CO2",
-          "O2",
-          "N2"
-        ],
-        "correct": 1
-      }
-    ],
-    "生物": [
-      {
-        "question": "光合成を行うのは?",
-        "answers": [
-          "動物",
-          "植物",
-          "菌類",
-          "細菌"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "人間の骨は何本?",
-        "answers": [
-          "約200本",
-          "約300本",
-          "約400本",
-          "約500本"
-        ],
-        "correct": 0
-      }
-    ]
-  },
-  "工作": {
-    "test": []
-  },
-  "地理": {
-    "テスト１": [
-      {
-        "question": "かつての考え：人口が多いことが○○の増加につながる",
-        "answers": [
-          "下人",
-          "国民",
-          "国人",
-          "愛国心"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "急激な人口増加は発展を妨げるとして両国とも○○○○○○を実施",
-        "answers": [
-          "墾田永年私財法",
-          "人口仰制制作",
-          "人口仰制政策",
-          "人口増加防止策"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "１９７９年から○○○○○○を実施。１夫妻につき子供１人",
-        "answers": [
-          "一人っ子政策",
-          "夫妻子一人政策",
-          "子一人政策",
-          "人口一人防止策"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "戸籍を持たない○○○の増加",
-        "answers": [
-          "黒孩子",
-          "黒死牟",
-          "原子核",
-          "中性子"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "人口抑制成功→極端な少子化による○○○○○○の減少と極端な高齢化",
-        "answers": [
-          "生産平均人口",
-          "生産年齢人口",
-          "年々生産人口",
-          "年代生産人口"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "第一次産業が中心→子供が貴重な○○○であるという考え",
-        "answers": [
-          "労働力",
-          "統率力",
-          "効率化",
-          "促進力"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "伝統的に女性の地位が低い→○○○○への理解が得にくい",
-        "answers": [
-          "国家計画",
-          "国民計画",
-          "SDGｓ",
-          "家族計画"
-        ],
-        "correct": 3
-      },
-      {
-        "question": "合計特殊出生率の高い地域・・・女性の○○○や一人当たりの総生産性が低い",
-        "answers": [
-          "認識力",
-          "認字率",
-          "識字率",
-          "記憶力"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "状況の改善のために：○○○○○○○○○○○/ライツの確立",
-        "answers": [
-          "ダーティーディーズダンダートチープ",
-          "リプロダクティブヘルス",
-          "クリエイティブヘルス",
-          "マイクロチップヘルス"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "女性の○○○○向上に向けた努力",
-        "answers": [
-          "教育標準",
-          "教育水準",
-          "教育平均",
-          "公平教育"
-        ],
-        "correct": 1
-      }
-    ],
-    "テスト２": [
-      {
-        "question": "出生率の低下○○○○○○○が２.1を下回っている",
-        "answers": [
-          "合計特殊出生率",
-          "総合特殊出生率",
-          "合計平均出生率",
-          "統合水準出生率"
-        ],
-        "correct": 0
-      },
-      {
-        "question": "○○○率：総人口に占める６５歳以上人口の割合の増加",
-        "answers": [
-          "少子化",
-          "高齢化",
-          "標齢化",
-          "無人化"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "高齢化率７％を超えると○○○○",
-        "answers": [
-          "高齢化社会",
-          "高齢社会",
-          "少子化社会",
-          "新時代"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "高齢化率が１４％を超えると○○○○○",
-        "answers": [
-          "超高齢化社会",
-          "極高齢社会",
-          "超高齢社会",
-          "独裁者会"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "高福祉・○○○の考え方",
-        "answers": [
-          "高還元",
-          "高負担",
-          "高収入",
-          "高年齢"
-        ],
-        "correct": 1
-      },
-      {
-        "question": "労働力不足を補うために→○○の受け入れを進めている",
-        "answers": [
-          "労力",
-          "政策",
-          "移民",
-          "国民"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "２０１０年代以降○○○○に転じ、同時に少子高齢化も進行",
-        "answers": [
-          "移民減少",
-          "国民減少",
-          "人口減少",
-          "産業減少"
-        ],
-        "correct": 2
-      },
-      {
-        "question": "高齢化の影響：年々○○○○○○○の増大",
-        "answers": [
-          "社会保険料",
-          "国民納税費",
-          "社会給付料",
-          "社会保障給付費"
-        ],
-        "correct": 3
-      },
-      {
-        "question": "若者の○○○○○○の増加",
-        "answers": [
-          "アルバイト・パート",
-          "クレイジーダイヤモンド",
-          "非国民雇用",
-          "非正規雇用"
-        ],
-        "correct": 3
-      },
-      {
-        "question": "労働力不足への政策：○○○○○○の受け入れ条件の緩和",
-        "answers": [
-          "国内労働者",
-          "移民労働者",
-          "外国人労働者",
-          "国民労働者"
-        ],
-        "correct": 2
-      }
-    ]
+    <div class="section-title">商品を選ぶ</div>
+    <div class="product-grid" id="orderGrid"></div>
+    <div class="empty-msg" id="orderEmptyMsg" style="display:none;">商品が登録されていません。商品管理モードで追加してください。</div>
+  </div>
+
+  <!-- 商品管理(オペレーター)モード -->
+  <div id="opMode" style="display:none;">
+    <div class="section-title">登録済み商品</div>
+    <div class="product-grid" id="opGrid"></div>
+    <div class="empty-msg" id="opEmptyMsg" style="display:none;">商品がまだありません。下から追加してください。</div>
+
+    <div class="add-form">
+      <div class="section-title" style="margin-top:0;">商品を追加</div>
+      <label for="nameInput">商品名</label>
+      <input type="text" id="nameInput" placeholder="例: 焼きそば">
+
+      <label for="imgInput">画像URL(任意)</label>
+      <input type="text" id="imgInput" placeholder="https://...">
+
+      <label for="maxInput">最大個数</label>
+      <input type="number" id="maxInput" placeholder="例: 10" min="1" step="1">
+
+      <div class="error-text" id="addError" style="display:none;"></div>
+      <button class="submit" id="addProductBtn">商品を追加</button>
+    </div>
+  </div>
+
+  <!-- 受信モード -->
+  <div id="receiveMode" style="display:none;">
+    <div class="subtabs">
+      <button id="subtabPending" class="active">受信中</button>
+      <button id="subtabLog">ログ</button>
+    </div>
+
+    <div id="pendingView">
+      <div id="pendingList"></div>
+      <div class="empty-msg" id="pendingEmptyMsg" style="display:none;">新しい注文はありません</div>
+    </div>
+
+    <div id="logView" style="display:none;">
+      <div id="logList"></div>
+      <div class="empty-msg" id="logEmptyMsg" style="display:none;">ログはまだありません</div>
+    </div>
+  </div>
+
+</main>
+
+<div class="send-bar" id="sendBar" style="display:none;">
+  <div class="total" id="totalText">0点</div>
+  <button id="sendOrderBtn" disabled>注文を送信</button>
+</div>
+
+<div class="toast" id="toast"></div>
+<div class="fontsize-toast" id="fontsizeToast">文字が小さいですか？<a href="#" id="fontsizeToastLink">設定を開いて文字を大きくしてみましょう。</a></div>
+
+<!-- 設定モーダル -->
+<!-- 表示設定モーダル(お客様も操作可) -->
+<div class="modal-overlay" id="displaySettingsModal" style="display:none;">
+  <div class="modal-box">
+    <h2>表示設定</h2>
+    <div class="settings-box" style="margin-top:0;">
+      <label for="fontSizeSlider">文字の大きさ</label>
+      <div class="font-size-row">
+        <input type="range" id="fontSizeSlider" min="80" max="150" step="5" value="100">
+        <span id="fontSizeValue">100%</span>
+      </div>
+      <div class="hint-text">画面の文字が見やすい大きさに調整できます。</div>
+    </div>
+    <div class="modal-close-row">
+      <button id="closeDisplaySettingsBtn">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<!-- 運営設定モーダル(パスワード保護) -->
+<div class="modal-overlay" id="opSettingsModal" style="display:none;">
+  <div class="modal-box">
+    <h2>運営設定</h2>
+
+    <div class="settings-box" style="margin-top:0;" id="opPasswordGate">
+      <label for="opPasswordInput">パスワード</label>
+      <input type="password" id="opPasswordInput" placeholder="運営設定用パスワード">
+      <div class="hint-text" id="opPasswordHint">初回はパスワードを自由に決めて入力してください。以後、同じパスワードが必要になります。</div>
+      <div class="error-text" id="opPasswordError" style="display:none;"></div>
+      <button class="submit" id="opPasswordSubmitBtn">開く</button>
+    </div>
+
+    <div class="settings-box" style="margin-top:0; display:none;" id="opSettingsBody">
+      <label for="ownerInput">オーナー名(ユーザー名 または 組織名)</label>
+      <input type="text" id="ownerInput" placeholder="例: taro-yamada">
+
+      <label for="repoInput">リポジトリ名</label>
+      <input type="text" id="repoInput" placeholder="例: yatai-order">
+
+      <label for="branchInput">ブランチ名</label>
+      <input type="text" id="branchInput" placeholder="main" value="main">
+
+      <label for="tokenInput">Personal Access Token</label>
+      <input type="password" id="tokenInput" placeholder="ghp_...">
+      <div class="hint-text">
+        Fine-grained token を推奨。対象リポジトリの Contents: Read and write 権限のみ付与してください。
+        トークンはこの端末のブラウザ内(localStorage)にのみ保存され、リポジトリには保存されません。
+      </div>
+
+      <label for="congestionThresholdInput">混雑表示のしきい値(受信中の件数)</label>
+      <input type="number" id="congestionThresholdInput" placeholder="例: 5" min="1" step="1" value="5">
+      <div class="hint-text">受信中(未対応)の注文がこの件数以上になると、注文画面に混雑メッセージを表示します。</div>
+
+      <label for="congestionMessageInput">混雑時のメッセージ</label>
+      <input type="text" id="congestionMessageInput" placeholder="現在混んでいます。お受け取りまでお時間をいただく場合があります。">
+
+      <label for="opPasswordChangeInput">運営設定パスワードを変更(任意)</label>
+      <input type="password" id="opPasswordChangeInput" placeholder="変更する場合のみ入力">
+      <div class="hint-text">
+        このパスワードは誤操作防止のための簡易ロックです。この端末のブラウザ内にのみ保存され、強固な認証ではありません。
+      </div>
+
+      <div class="error-text" id="settingsError" style="display:none;"></div>
+      <button class="submit" id="saveSettingsBtn">保存して接続</button>
+    </div>
+
+    <div class="modal-close-row">
+      <button id="closeOpSettingsBtn">閉じる</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const LS_KEY = 'yatai_github_config';
+const LS_DISPLAY_KEY = 'yatai_display_settings';
+const LS_PASSWORD_KEY = 'yatai_op_password';
+const DATA_PATH = 'yatai_data.json';
+
+let config = { owner: '', repo: '', branch: 'main', token: '', congestionThreshold: 5, congestionMessage: '現在混んでいます。お受け取りまでお時間をいただく場合があります。' };
+let displaySettings = { fontScale: 100 };
+let opPassword = '';
+let opUnlocked = false;
+let dataState = { products: [], orders: [], log: [] };
+let fileSha = null;
+
+let mode = 'order';
+let subview = 'pending';
+let qtyState = {};
+let isSyncing = false;
+let pendingWrite = false;
+
+const toast = document.getElementById('toast');
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 2200);
+}
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function formatTime(iso) {
+  const d = new Date(iso);
+  return d.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
+}
+
+function genId(prefix) {
+  return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7);
+}
+
+// ---------- 設定管理(運営設定: GitHub接続・混雑設定) ----------
+
+function loadConfig() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) config = Object.assign(config, JSON.parse(raw));
+  } catch (e) {}
+  try {
+    const rawPw = localStorage.getItem(LS_PASSWORD_KEY);
+    if (rawPw) opPassword = rawPw;
+  } catch (e) {}
+  document.getElementById('ownerInput').value = config.owner || '';
+  document.getElementById('repoInput').value = config.repo || '';
+  document.getElementById('branchInput').value = config.branch || 'main';
+  document.getElementById('tokenInput').value = config.token || '';
+  document.getElementById('congestionThresholdInput').value = config.congestionThreshold || 5;
+  document.getElementById('congestionMessageInput').value = config.congestionMessage || '現在混んでいます。お受け取りまでお時間をいただく場合があります。';
+  updateSyncStatusLabel();
+}
+
+function saveConfig() {
+  localStorage.setItem(LS_KEY, JSON.stringify(config));
+}
+
+function isConfigured() {
+  return !!(config.owner && config.repo && config.branch && config.token);
+}
+
+function updateSyncStatusLabel(text) {
+  const el = document.getElementById('syncStatus');
+  if (text) { el.textContent = text; return; }
+  if (!isConfigured()) { el.textContent = '未設定 - 「運営設定」から接続してください'; return; }
+  el.textContent = `${config.owner}/${config.repo} に接続中`;
+}
+
+// ---------- 表示設定(お客様も操作可) ----------
+
+function loadDisplaySettings() {
+  try {
+    const raw = localStorage.getItem(LS_DISPLAY_KEY);
+    if (raw) displaySettings = Object.assign(displaySettings, JSON.parse(raw));
+  } catch (e) {}
+  const fontScale = displaySettings.fontScale || 100;
+  document.getElementById('fontSizeSlider').value = fontScale;
+  document.getElementById('fontSizeValue').textContent = fontScale + '%';
+  applyFontScale(fontScale);
+}
+
+function saveDisplaySettings() {
+  localStorage.setItem(LS_DISPLAY_KEY, JSON.stringify(displaySettings));
+}
+
+function applyFontScale(scale) {
+  document.documentElement.style.setProperty('--font-scale', (scale / 100).toFixed(2));
+}
+
+document.getElementById('displaySettingsBtn').addEventListener('click', () => {
+  document.getElementById('displaySettingsModal').style.display = 'flex';
+});
+document.getElementById('closeDisplaySettingsBtn').addEventListener('click', () => {
+  document.getElementById('displaySettingsModal').style.display = 'none';
+});
+document.getElementById('fontSizeSlider').addEventListener('input', (e) => {
+  const val = parseInt(e.target.value, 10);
+  document.getElementById('fontSizeValue').textContent = val + '%';
+  applyFontScale(val);
+  displaySettings.fontScale = val;
+  saveDisplaySettings();
+});
+
+// ---------- 運営設定モーダル(パスワード保護) ----------
+
+function openOpSettingsModal() {
+  document.getElementById('opSettingsModal').style.display = 'flex';
+  const gate = document.getElementById('opPasswordGate');
+  const body = document.getElementById('opSettingsBody');
+  const pwInput = document.getElementById('opPasswordInput');
+  const pwError = document.getElementById('opPasswordError');
+  const pwHint = document.getElementById('opPasswordHint');
+
+  opUnlocked = false;
+  pwInput.value = '';
+  pwError.style.display = 'none';
+  gate.style.display = 'block';
+  body.style.display = 'none';
+
+  if (!opPassword) {
+    pwHint.textContent = '初回はパスワードを自由に決めて入力してください。以後、同じパスワードが必要になります。';
+  } else {
+    pwHint.textContent = '運営設定用パスワードを入力してください。';
   }
-};
-        
-        // 状態管理
-        let currentSubject = "";
-        let currentTopic = "";
-        let currentQuestionIndex = 0;
-        let correctCount = 0;
-        let totalQuestions = 0;
-        let isMobileMode = false;
-        let totalPoints = 0;
-        let questionLog = []; // 問題履歴
-        let totalAnswered = 0; // 解いた問題数
-        let totalCorrect = 0; // 正解した問題数
-        let animationQuality = 'standard'; // アニメーション品質
-        let colorTheme = 'blue'; // カラーテーマ
-        let lowMemoryMode = false; // 省GB設定
-        
-        // ポイントをローカルストレージから読み込み
-        function loadPoints() {
-            const saved = localStorage.getItem('quizPoints');
-            if (saved) {
-                totalPoints = parseInt(saved);
-            }
-            
-            const logSaved = localStorage.getItem('questionLog');
-            if (logSaved) {
-                questionLog = JSON.parse(logSaved);
-            }
-            
-            const answeredSaved = localStorage.getItem('totalAnswered');
-            if (answeredSaved) {
-                totalAnswered = parseInt(answeredSaved);
-            }
-            
-            const correctSaved = localStorage.getItem('totalCorrect');
-            if (correctSaved) {
-                totalCorrect = parseInt(correctSaved);
-            }
-            
-            // 設定を読み込み
-            const animSaved = localStorage.getItem('animationQuality');
-            if (animSaved) {
-                animationQuality = animSaved;
-                applyAnimationQuality();
-            }
-            
-            const colorSaved = localStorage.getItem('colorTheme');
-            if (colorSaved) {
-                colorTheme = colorSaved;
-                applyColorTheme();
-            }
-            
-            const lowMemSaved = localStorage.getItem('lowMemoryMode');
-            if (lowMemSaved) {
-                lowMemoryMode = lowMemSaved === 'true';
-                applyLowMemoryMode();
-            }
-            
-            updatePointsDisplay();
-        }
-        
-        // ポイントを保存
-        function savePoints() {
-            localStorage.setItem('quizPoints', totalPoints.toString());
-            
-            // 省GB設定時は履歴を制限
-            const logToSave = lowMemoryMode ? questionLog.slice(0, 10) : questionLog;
-            localStorage.setItem('questionLog', JSON.stringify(logToSave));
-            
-            localStorage.setItem('totalAnswered', totalAnswered.toString());
-            localStorage.setItem('totalCorrect', totalCorrect.toString());
-        }
-        
-        // ポイント表示を更新
-        function updatePointsDisplay() {
-            document.getElementById('totalPoints').textContent = totalPoints;
-            document.getElementById('pointsDisplayValue').textContent = totalPoints;
-        }
-        
-        // ポイント獲得通知
-        function showPointNotification(points) {
-            // ポイント表示窓にアニメーション
-            const pointsDisplay = document.querySelector('.points-display');
-            const valueElement = document.getElementById('pointsDisplayValue');
-            
-            // フラッシュアニメーション
-            pointsDisplay.classList.add('flash');
-            setTimeout(() => {
-                pointsDisplay.classList.remove('flash');
-            }, 500);
-            
-            // 増加ポイント表示
-            const gainElement = document.createElement('div');
-            gainElement.className = 'point-gain';
-            gainElement.textContent = `+${points}`;
-            valueElement.parentElement.appendChild(gainElement);
-            
-            setTimeout(() => {
-                gainElement.remove();
-            }, 1000);
-        }
-        
-        // 初期化
-        function init() {
-            const subjectList = document.getElementById("subjectList");
-            subjectList.innerHTML = "";
-            
-            Object.keys(quizData).forEach(subject => {
-                const button = document.createElement("button");
-                button.className = "main-button";
-                button.textContent = subject;
-                button.onclick = () => selectSubject(subject);
-                subjectList.appendChild(button);
-            });
-            
-            loadPoints();
-            updateMenuButtons();
-            initBackgroundShapes();
-        }
-        
-        // 背景図形アニメーション初期化
-        function initBackgroundShapes() {
-            const bgShapes = document.getElementById('bgShapes');
-            const shapeTypes = ['circle', 'square', 'triangle'];
-            const shapeCount = 15;
-            
-            for (let i = 0; i < shapeCount; i++) {
-                const shape = document.createElement('div');
-                shape.className = `shape ${shapeTypes[Math.floor(Math.random() * shapeTypes.length)]}`;
-                
-                const size = Math.random() * 60 + 30;
-                shape.style.width = size + 'px';
-                shape.style.height = size + 'px';
-                shape.style.left = Math.random() * 100 + '%';
-                shape.style.animationDuration = (Math.random() * 15 + 10) + 's';
-                shape.style.animationDelay = Math.random() * 5 + 's';
-                
-                bgShapes.appendChild(shape);
-            }
-        }
-        
-        // 教科選択
-        function selectSubject(subject) {
-            currentSubject = subject;
-            showScreen("topicScreen");
-            
-            document.getElementById("topicTitle").textContent = subject + " - 科目選択";
-            const topicList = document.getElementById("topicList");
-            topicList.innerHTML = "";
-            
-            Object.keys(quizData[subject]).forEach(topic => {
-                const button = document.createElement("button");
-                button.className = "main-button";
-                button.textContent = topic;
-                button.onclick = () => selectTopic(topic);
-                topicList.appendChild(button);
-            });
-            
-            updateMenuButtons();
-        }
-        
-        // 科目選択
-        function selectTopic(topic) {
-            currentTopic = topic;
-            currentQuestionIndex = 0;
-            correctCount = 0;
-            totalQuestions = quizData[currentSubject][currentTopic].length;
-            
-            showScreen("quizScreen");
-            updateMenuButtons();
-            showQuestion();
-        }
-        
-        // 問題表示
-        function showQuestion() {
-            const questions = quizData[currentSubject][currentTopic];
-            
-            if (currentQuestionIndex >= questions.length) {
-                showResult();
-                return;
-            }
-            
-            const question = questions[currentQuestionIndex];
-            
-            document.getElementById("progressInfo").textContent = 
-                `問題 ${currentQuestionIndex + 1} / ${totalQuestions}`;
-            document.getElementById("questionText").textContent = question.question;
-            
-            const answerArea = document.getElementById("answerArea");
-            answerArea.innerHTML = "";
-            
-            question.answers.forEach((answer, index) => {
-                const button = document.createElement("button");
-                button.className = "answer-button";
-                button.textContent = answer;
-                button.onclick = () => selectAnswer(index);
-                answerArea.appendChild(button);
-            });
-        }
-        
-        // 回答選択
-        function selectAnswer(answerIndex) {
-            const questions = quizData[currentSubject][currentTopic];
-            const question = questions[currentQuestionIndex];
-            
-            // クリックアニメーション
-            const buttons = document.querySelectorAll('.answer-button');
-            buttons[answerIndex].classList.add('clicked');
-            
-            // 正解判定とポイント加算
-            let earnedPoints = 0;
-            const isCorrect = answerIndex === question.correct;
-            
-            if (isCorrect) {
-                correctCount++;
-                totalCorrect++;
-                earnedPoints = 10; // 正解で10ポイント
-                totalPoints += earnedPoints;
-            }
-            
-            // 履歴に記録
-            totalAnswered++;
-            const logEntry = {
-                timestamp: new Date().toISOString(),
-                subject: currentSubject,
-                topic: currentTopic,
-                question: question.question,
-                correct: isCorrect,
-                points: earnedPoints
-            };
-            questionLog.unshift(logEntry); // 最新を先頭に
-            
-            // ログの保持件数を設定に応じて制限
-            const maxLog = lowMemoryMode ? 10 : 50;
-            if (questionLog.length > maxLog) {
-                questionLog = questionLog.slice(0, maxLog);
-            }
-            
-            savePoints();
-            updatePointsDisplay();
-            
-            if (earnedPoints > 0) {
-                showPointNotification(earnedPoints);
-            }
-            
-            // アニメーション後に次の問題へ
-            setTimeout(() => {
-                currentQuestionIndex++;
-                showQuestion();
-            }, earnedPoints > 0 ? 1000 : 400); // 正解時は少し長く待つ
-        }
-        
-        // 問題スキップ
-        function skipQuestion() {
-            currentQuestionIndex++;
-            closeMenu();
-            showQuestion();
-        }
-        
-        // 結果表示
-        function showResult() {
-            showScreen("resultScreen");
-            updateMenuButtons();
-            
-            // ボーナスポイント計算
-            const percentage = Math.round((correctCount / totalQuestions) * 100);
-            let bonusPoints = 0;
-            
-            if (percentage === 100) {
-                bonusPoints = 50; // 完璧ボーナス
-            } else if (percentage >= 80) {
-                bonusPoints = 30; // 優秀ボーナス
-            } else if (percentage >= 60) {
-                bonusPoints = 10; // 合格ボーナス
-            }
-            
-            if (bonusPoints > 0) {
-                totalPoints += bonusPoints;
-                savePoints();
-                updatePointsDisplay();
-                
-                // ボーナスポイント通知は少し遅らせる
-                setTimeout(() => {
-                    showPointNotification(bonusPoints + ' ボーナス');
-                }, 500);
-            }
-            
-            document.getElementById("resultScore").textContent = 
-                `${correctCount} / ${totalQuestions}`;
-            
-            let message = "";
-            let animationHTML = "";
-            
-            if (percentage === 100) {
-                message = "完璧です！";
-                // 花火アニメーション
-                animationHTML = `
-                    <div class="firework">
-                        <div class="firework-particle"></div>
-                        <div class="firework-particle"></div>
-                        <div class="firework-particle"></div>
-                        <div class="firework-particle"></div>
-                        <div class="firework-particle"></div>
-                        <div class="firework-particle"></div>
-                        <div class="firework-particle"></div>
-                        <div class="firework-particle"></div>
-                    </div>
-                `;
-            } else if (percentage >= 80) {
-                message = "素晴らしい！";
-                // 星アニメーション
-                animationHTML = `
-                    <div class="stars">
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="star"></div>
-                        <div class="star"></div>
-                    </div>
-                `;
-            } else if (percentage >= 60) {
-                message = "良くできました！";
-                // サムズアップアニメーション
-                animationHTML = `
-                    <div class="thumbs-up">
-                        <div class="thumb"></div>
-                    </div>
-                `;
-            } else {
-                message = "もう少し頑張りましょう！";
-                // 筋肉アニメーション
-                animationHTML = `
-                    <div class="muscle">
-                        <div class="arm">
-                            <div class="bicep"></div>
-                        </div>
-                    </div>
-                `;
-            }
-            
-            document.getElementById("resultAnimation").innerHTML = animationHTML;
-            document.getElementById("resultMessage").textContent = message;
-        }
-        
-        // もう一度
-        function retryQuiz() {
-            currentQuestionIndex = 0;
-            correctCount = 0;
-            showScreen("quizScreen");
-            updateMenuButtons();
-            showQuestion();
-        }
-        
-        // 画面切り替え
-        function showScreen(screenId) {
-            document.querySelectorAll(".screen").forEach(screen => {
-                screen.classList.remove("active");
-            });
-            document.getElementById(screenId).classList.add("active");
-            closeMenu();
-        }
-        
-        // メニュー画面に戻る
-        function goToMainMenu() {
-            currentSubject = "";
-            currentTopic = "";
-            showScreen("mainScreen");
-            updateMenuButtons();
-        }
-        
-        // 科目選択に戻る
-        function goToSubjectMenu() {
-            if (currentSubject) {
-                selectSubject(currentSubject);
-            }
-        }
-        
-        // メニューボタンの表示制御
-        function updateMenuButtons() {
-            const activeScreen = document.querySelector('.screen.active').id;
-            const menuUserInfo = document.getElementById('menuUserInfo');
-            const menuSettings = document.getElementById('menuSettings');
-            const menuToMain = document.getElementById('menuToMain');
-            const menuToTopic = document.getElementById('menuToTopic');
-            const menuSkip = document.getElementById('menuSkip');
-            
-            // ユーザー情報と設定ボタンは常に表示
-            menuUserInfo.style.display = 'block';
-            menuSettings.style.display = 'block';
-            
-            // 各画面でのボタンの表示/非表示を制御
-            if (activeScreen === 'mainScreen') {
-                // 教科選択画面：何も表示しない
-                menuToMain.style.display = 'none';
-                menuToTopic.style.display = 'none';
-                menuSkip.style.display = 'none';
-            } else if (activeScreen === 'topicScreen') {
-                // 科目選択画面：教科選択に戻るのみ
-                menuToMain.style.display = 'block';
-                menuToTopic.style.display = 'none';
-                menuSkip.style.display = 'none';
-            } else if (activeScreen === 'quizScreen') {
-                // クイズ画面：すべて表示
-                menuToMain.style.display = 'block';
-                menuToTopic.style.display = 'block';
-                menuSkip.style.display = 'block';
-            } else if (activeScreen === 'resultScreen') {
-                // 結果画面：教科選択と科目選択に戻る
-                menuToMain.style.display = 'block';
-                menuToTopic.style.display = 'block';
-                menuSkip.style.display = 'none';
-            } else if (activeScreen === 'userInfoScreen' || activeScreen === 'settingsScreen') {
-                // ユーザー情報・設定画面：メニューに戻るのみ
-                menuToMain.style.display = 'block';
-                menuToTopic.style.display = 'none';
-                menuSkip.style.display = 'none';
-            }
-        }
-        
-        // メニュー開閉
-        function toggleMenu() {
-            const menu = document.getElementById("dropdownMenu");
-            const menuButton = document.getElementById("menuButton");
-            
-            if (menu.style.display === "block") {
-                menu.style.display = "none";
-                menuButton.classList.remove('active');
-            } else {
-                menu.style.display = "block";
-                menuButton.classList.add('active');
-            }
-        }
-        
-        function closeMenu() {
-            document.getElementById("dropdownMenu").style.display = "none";
-            document.getElementById("menuButton").classList.remove('active');
-        }
-        
-        // モード切り替え
-        function toggleMode(event) {
-            event.stopPropagation();
-            isMobileMode = !isMobileMode;
-            
-            const body = document.body;
-            const slider = document.getElementById("toggleSlider");
-            const toggleSwitch = slider.parentElement;
-            const modeLabel = document.getElementById("modeLabel");
-            
-            if (isMobileMode) {
-                body.classList.add("mobile-mode");
-                slider.classList.add("active");
-                toggleSwitch.classList.add("active");
-                modeLabel.textContent = "Mobile";
-            } else {
-                body.classList.remove("mobile-mode");
-                slider.classList.remove("active");
-                toggleSwitch.classList.remove("active");
-                modeLabel.textContent = "PC";
-            }
-        }
-        
-        // ユーザー情報画面を表示
-        function showUserInfo() {
-            closeMenu();
-            showScreen("userInfoScreen");
-            updateUserInfoDisplay();
-        }
-        
-        // ユーザー情報を更新
-        function updateUserInfoDisplay() {
-            document.getElementById('userTotalPoints').textContent = totalPoints;
-            document.getElementById('userTotalAnswered').textContent = totalAnswered;
-            
-            const accuracy = totalAnswered > 0 ? Math.round((totalCorrect / totalAnswered) * 100) : 0;
-            document.getElementById('userAccuracy').textContent = accuracy + '%';
-            
-            // ログ表示
-            const logContainer = document.getElementById('questionLog');
-            logContainer.innerHTML = '';
-            
-            if (questionLog.length === 0) {
-                logContainer.innerHTML = '<div style="text-align: center; color: #60a5fa; padding: 20px;">まだ問題を解いていません</div>';
-            } else {
-                questionLog.forEach((entry, index) => {
-                    const date = new Date(entry.timestamp);
-                    const timeStr = date.toLocaleString('ja-JP');
-                    
-                    const logItem = document.createElement('div');
-                    logItem.style.cssText = `
-                        padding: 15px;
-                        margin-bottom: 10px;
-                        background: rgba(59, 130, 246, 0.05);
-                        border-left: 4px solid ${entry.correct ? '#34d399' : '#ef4444'};
-                        border-radius: 5px;
-                    `;
-                    
-                    logItem.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
-                            <span style="color: #60a5fa; font-weight: bold;">${entry.subject} - ${entry.topic}</span>
-                            <span style="color: ${entry.correct ? '#34d399' : '#ef4444'}; font-weight: bold;">
-                                ${entry.correct ? '正解 +' + entry.points + 'pt' : '不正解'}
-                            </span>
-                        </div>
-                        <div style="color: #93c5fd; margin-bottom: 5px;">${entry.question}</div>
-                        <div style="color: #60a5fa; font-size: 0.85em;">${timeStr}</div>
-                    `;
-                    
-                    logContainer.appendChild(logItem);
-                });
-            }
-        }
-        
-        // 全データをクリア
-        function clearAllData() {
-            if (confirm('本当に全てのデータ（ポイント、履歴）をリセットしますか？\nこの操作は取り消せません。')) {
-                localStorage.clear();
-                totalPoints = 0;
-                questionLog = [];
-                totalAnswered = 0;
-                totalCorrect = 0;
-                updatePointsDisplay();
-                updateUserInfoDisplay();
-                alert('全てのデータをリセットしました');
-            }
-        }
-        
-        // 設定画面を表示
-        function showSettings() {
-            closeMenu();
-            showScreen("settingsScreen");
-            updateSettingsDisplay();
-        }
-        
-        // 設定画面の表示を更新
-        function updateSettingsDisplay() {
-            // アニメーション品質ボタンのハイライト
-            document.getElementById('animLow').style.opacity = animationQuality === 'low' ? '1' : '0.6';
-            document.getElementById('animStandard').style.opacity = animationQuality === 'standard' ? '1' : '0.6';
-            document.getElementById('animHigh').style.opacity = animationQuality === 'high' ? '1' : '0.6';
-            
-            const animText = animationQuality === 'low' ? '最低' : animationQuality === 'high' ? '最高' : '標準';
-            document.getElementById('currentAnim').textContent = animText;
-            
-            // カラーテーマボタンのハイライト
-            document.getElementById('colorBlue').style.opacity = colorTheme === 'blue' ? '1' : '0.6';
-            document.getElementById('colorRed').style.opacity = colorTheme === 'red' ? '1' : '0.6';
-            document.getElementById('colorMono').style.opacity = colorTheme === 'mono' ? '1' : '0.6';
-            
-            const colorText = colorTheme === 'blue' ? '黒青' : colorTheme === 'red' ? '黒赤' : '白黒';
-            document.getElementById('currentColor').textContent = colorText;
-            
-            // 省GB設定
-            const slider = document.getElementById('lowMemorySlider');
-            const status = document.getElementById('lowMemoryStatus');
-            if (lowMemoryMode) {
-                slider.classList.add('active');
-                slider.parentElement.classList.add('active');
-                status.textContent = 'ON';
-            } else {
-                slider.classList.remove('active');
-                slider.parentElement.classList.remove('active');
-                status.textContent = 'OFF';
-            }
-        }
-        
-        // アニメーション品質を設定
-        function setAnimationQuality(quality) {
-            animationQuality = quality;
-            localStorage.setItem('animationQuality', quality);
-            applyAnimationQuality();
-            updateSettingsDisplay();
-        }
-        
-        // アニメーション品質を適用
-        function applyAnimationQuality() {
-            document.body.classList.remove('anim-low', 'anim-high');
-            if (animationQuality === 'low') {
-                document.body.classList.add('anim-low');
-            } else if (animationQuality === 'high') {
-                document.body.classList.add('anim-high');
-            }
-        }
-        
-        // カラーテーマを設定
-        function setColorTheme(theme) {
-            colorTheme = theme;
-            localStorage.setItem('colorTheme', theme);
-            applyColorTheme();
-            updateSettingsDisplay();
-        }
-        
-        // カラーテーマを適用
-        function applyColorTheme() {
-            document.body.classList.remove('theme-blue', 'theme-red', 'theme-mono');
-            if (colorTheme === 'red') {
-                document.body.classList.add('theme-red');
-            } else if (colorTheme === 'mono') {
-                document.body.classList.add('theme-mono');
-            } else {
-                document.body.classList.add('theme-blue');
-            }
-        }
-        
-        // 省GB設定を切り替え
-        function toggleLowMemory(event) {
-            event.stopPropagation();
-            lowMemoryMode = !lowMemoryMode;
-            localStorage.setItem('lowMemoryMode', lowMemoryMode.toString());
-            applyLowMemoryMode();
-            updateSettingsDisplay();
-            
-            // 既存のログも制限
-            if (lowMemoryMode && questionLog.length > 10) {
-                questionLog = questionLog.slice(0, 10);
-                savePoints();
-            }
-        }
-        
-        // 省GB設定を適用
-        function applyLowMemoryMode() {
-            // 現在は履歴の制限のみだが、将来的に他の最適化も追加可能
-        }
-        
-        // 初期化実行
-        init();
-    </script>
+}
+
+document.getElementById('opSettingsBtn').addEventListener('click', openOpSettingsModal);
+document.getElementById('closeOpSettingsBtn').addEventListener('click', () => {
+  document.getElementById('opSettingsModal').style.display = 'none';
+});
+
+document.getElementById('opPasswordSubmitBtn').addEventListener('click', () => {
+  const pwInput = document.getElementById('opPasswordInput');
+  const pwError = document.getElementById('opPasswordError');
+  const entered = pwInput.value;
+
+  if (!entered) {
+    pwError.textContent = 'パスワードを入力してください';
+    pwError.style.display = 'block';
+    return;
+  }
+
+  if (!opPassword) {
+    // 初回設定
+    opPassword = entered;
+    localStorage.setItem(LS_PASSWORD_KEY, opPassword);
+    unlockOpSettings();
+    showToast('運営設定パスワードを設定しました');
+    return;
+  }
+
+  if (entered === opPassword) {
+    unlockOpSettings();
+  } else {
+    pwError.textContent = 'パスワードが違います';
+    pwError.style.display = 'block';
+  }
+});
+
+function unlockOpSettings() {
+  opUnlocked = true;
+  document.getElementById('opPasswordGate').style.display = 'none';
+  document.getElementById('opSettingsBody').style.display = 'block';
+}
+
+document.getElementById('saveSettingsBtn').addEventListener('click', async () => {
+  const owner = document.getElementById('ownerInput').value.trim();
+  const repo = document.getElementById('repoInput').value.trim();
+  const branch = document.getElementById('branchInput').value.trim() || 'main';
+  const token = document.getElementById('tokenInput').value.trim();
+  const congestionThresholdRaw = parseInt(document.getElementById('congestionThresholdInput').value, 10);
+  const congestionThreshold = (congestionThresholdRaw && congestionThresholdRaw > 0) ? congestionThresholdRaw : 5;
+  const congestionMessage = document.getElementById('congestionMessageInput').value.trim() || '現在混んでいます。お受け取りまでお時間をいただく場合があります。';
+  const newPassword = document.getElementById('opPasswordChangeInput').value.trim();
+  const errEl = document.getElementById('settingsError');
+
+  if (!owner || !repo || !token) {
+    errEl.textContent = 'オーナー名・リポジトリ名・トークンは必須です';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  config = { owner, repo, branch, token, congestionThreshold, congestionMessage };
+  saveConfig();
+
+  if (newPassword) {
+    opPassword = newPassword;
+    localStorage.setItem(LS_PASSWORD_KEY, opPassword);
+    document.getElementById('opPasswordChangeInput').value = '';
+    showToast('運営設定パスワードを変更しました');
+  }
+
+  updateSyncStatusLabel('接続確認中...');
+
+  const ok = await syncFromGithub();
+  if (ok) {
+    document.getElementById('opSettingsModal').style.display = 'none';
+    updateSyncStatusLabel();
+    showToast('GitHubに接続しました');
+    startPolling();
+  } else {
+    errEl.textContent = '接続に失敗しました。オーナー名・リポジトリ名・トークン・ブランチ名を確認してください';
+    errEl.style.display = 'block';
+    updateSyncStatusLabel('接続失敗');
+  }
+});
+
+// ---------- GitHub API ----------
+
+function apiUrl() {
+  return `https://api.github.com/repos/${config.owner}/${config.repo}/contents/${DATA_PATH}?ref=${encodeURIComponent(config.branch)}`;
+}
+
+function b64EncodeUnicode(str) {
+  return btoa(unescape(encodeURIComponent(str)));
+}
+
+function b64DecodeUnicode(str) {
+  return decodeURIComponent(escape(atob(str)));
+}
+
+async function syncFromGithub() {
+  if (!isConfigured()) return false;
+  try {
+    const res = await fetch(apiUrl(), {
+      headers: {
+        'Authorization': `Bearer ${config.token}`,
+        'Accept': 'application/vnd.github+json'
+      }
+    });
+
+    if (res.status === 404) {
+      // ファイルがまだ存在しない -> 初期データで作成
+      dataState = { products: [], orders: [], log: [] };
+      fileSha = null;
+      const created = await writeToGithub(dataState, null);
+      return created;
+    }
+
+    if (!res.ok) {
+      return false;
+    }
+
+    const json = await res.json();
+    fileSha = json.sha;
+    const content = b64DecodeUnicode(json.content.replace(/\n/g, ''));
+    dataState = JSON.parse(content);
+    if (!dataState.products) dataState.products = [];
+    if (!dataState.orders) dataState.orders = [];
+    if (!dataState.log) dataState.log = [];
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function writeToGithub(newData, expectedSha) {
+  if (!isConfigured()) return false;
+  try {
+    const body = {
+      message: 'update order data',
+      content: b64EncodeUnicode(JSON.stringify(newData, null, 2)),
+      branch: config.branch
+    };
+    if (expectedSha) body.sha = expectedSha;
+
+    const res = await fetch(apiUrl().split('?')[0], {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${config.token}`,
+        'Accept': 'application/vnd.github+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+
+    if (res.status === 409) {
+      // sha競合: 最新を取得してリトライは呼び出し元に任せる
+      return false;
+    }
+    if (!res.ok) return false;
+
+    const json = await res.json();
+    fileSha = json.content.sha;
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+async function saveData(mutateFn, retries = 3) {
+  if (!isConfigured()) {
+    showToast('先に設定からGitHubに接続してください');
+    return false;
+  }
+  for (let i = 0; i < retries; i++) {
+    // 最新状態を取得してから変更を適用(競合を減らす)
+    const fresh = await syncFromGithub();
+    if (!fresh) {
+      if (i === retries - 1) {
+        showToast('同期に失敗しました。通信状況を確認してください');
+        return false;
+      }
+      continue;
+    }
+    mutateFn(dataState);
+    const ok = await writeToGithub(dataState, fileSha);
+    if (ok) {
+      renderAll();
+      return true;
+    }
+    // 競合したらループして再試行
+  }
+  showToast('保存に失敗しました。もう一度お試しください');
+  return false;
+}
+
+let pollTimer = null;
+function startPolling() {
+  if (pollTimer) clearInterval(pollTimer);
+  pollTimer = setInterval(async () => {
+    if (isSyncing || !isConfigured()) return;
+    isSyncing = true;
+    const ok = await syncFromGithub();
+    isSyncing = false;
+    if (ok) renderAll();
+  }, 5000);
+}
+
+// ---------- レンダリング ----------
+
+function renderAll() {
+  syncQtyStateWithProducts();
+  renderOrderGrid();
+  renderOpGrid();
+  renderPending();
+  renderLog();
+  updateSendBar();
+  updatePendingBadge();
+  updateCongestionBanner();
+}
+
+function updateCongestionBanner() {
+  const banner = document.getElementById('congestionBanner');
+  const text = document.getElementById('congestionText');
+  const pendingCount = dataState.orders.filter(o => o.status === 'pending').length;
+  const threshold = config.congestionThreshold || 5;
+
+  if (pendingCount >= threshold) {
+    text.textContent = config.congestionMessage || '現在混んでいます。お受け取りまでお時間をいただく場合があります。';
+    banner.style.display = 'flex';
+  } else {
+    banner.style.display = 'none';
+  }
+}
+
+function syncQtyStateWithProducts() {
+  const ids = dataState.products.map(p => p.id);
+  Object.keys(qtyState).forEach(id => {
+    if (!ids.includes(id)) delete qtyState[id];
+  });
+  dataState.products.forEach(p => {
+    if (!(p.id in qtyState)) qtyState[p.id] = 0;
+  });
+}
+
+function renderOrderGrid() {
+  const orderGrid = document.getElementById('orderGrid');
+  const orderEmptyMsg = document.getElementById('orderEmptyMsg');
+  orderGrid.innerHTML = '';
+  if (dataState.products.length === 0) {
+    orderEmptyMsg.style.display = 'block';
+    return;
+  }
+  orderEmptyMsg.style.display = 'none';
+  dataState.products.forEach(p => {
+    const qty = qtyState[p.id] || 0;
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      ${p.image ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" onerror="this.outerHTML='<div class=noimg>画像なし</div>'">` : `<div class="noimg">画像なし</div>`}
+      <div class="name">${escapeHtml(p.name)}</div>
+      <div class="maxnum">最大 ${p.maxQty}個</div>
+      <div class="qty-row">
+        <button data-act="dec" data-id="${p.id}">-</button>
+        <span id="qty-${p.id}">${qty}</span>
+        <button data-act="inc" data-id="${p.id}">+</button>
+      </div>
+    `;
+    orderGrid.appendChild(card);
+  });
+  orderGrid.querySelectorAll('button[data-act]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const id = btn.getAttribute('data-id');
+      const act = btn.getAttribute('data-act');
+      const product = dataState.products.find(p => p.id === id);
+      if (!product) return;
+      let q = qtyState[id] || 0;
+      if (act === 'inc') q = Math.min(product.maxQty, q + 1);
+      else q = Math.max(0, q - 1);
+      qtyState[id] = q;
+      document.getElementById('qty-' + id).textContent = q;
+      updateSendBar();
+    });
+  });
+}
+
+function renderOpGrid() {
+  const opGrid = document.getElementById('opGrid');
+  const opEmptyMsg = document.getElementById('opEmptyMsg');
+  opGrid.innerHTML = '';
+  if (dataState.products.length === 0) {
+    opEmptyMsg.style.display = 'block';
+    return;
+  }
+  opEmptyMsg.style.display = 'none';
+  dataState.products.forEach(p => {
+    const card = document.createElement('div');
+    card.className = 'product-card';
+    card.innerHTML = `
+      <button class="del-btn" data-id="${p.id}" aria-label="削除">×</button>
+      ${p.image ? `<img src="${escapeHtml(p.image)}" alt="${escapeHtml(p.name)}" onerror="this.outerHTML='<div class=noimg>画像なし</div>'">` : `<div class="noimg">画像なし</div>`}
+      <div class="name">${escapeHtml(p.name)}</div>
+      <div class="maxnum">最大 ${p.maxQty}個</div>
+    `;
+    opGrid.appendChild(card);
+  });
+  opGrid.querySelectorAll('.del-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-id');
+      const product = dataState.products.find(p => p.id === id);
+      if (!product) return;
+      if (!confirm(`「${product.name}」を削除しますか?`)) return;
+      const ok = await saveData(d => {
+        d.products = d.products.filter(p => p.id !== id);
+      });
+      if (ok) showToast('商品を削除しました');
+    });
+  });
+}
+
+function updateSendBar() {
+  const sendBar = document.getElementById('sendBar');
+  const totalText = document.getElementById('totalText');
+  const sendOrderBtn = document.getElementById('sendOrderBtn');
+  const roomInput = document.getElementById('roomInput');
+
+  if (mode !== 'order') {
+    sendBar.style.display = 'none';
+    return;
+  }
+  sendBar.style.display = dataState.products.length ? 'flex' : 'none';
+  const total = Object.values(qtyState).reduce((a, b) => a + b, 0);
+  totalText.textContent = total + '点';
+  const room = roomInput.value.trim();
+  sendOrderBtn.disabled = !(total > 0 && room.length > 0 && isConfigured());
+}
+
+function renderPending() {
+  const pendingList = document.getElementById('pendingList');
+  const pendingEmptyMsg = document.getElementById('pendingEmptyMsg');
+  const pending = dataState.orders.filter(o => o.status === 'pending')
+    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
+
+  pendingList.innerHTML = '';
+  if (pending.length === 0) {
+    pendingEmptyMsg.style.display = 'block';
+    return;
+  }
+  pendingEmptyMsg.style.display = 'none';
+
+  pending.forEach(order => {
+    const card = document.createElement('div');
+    card.className = 'order-card';
+    const itemsHtml = order.items.map(it =>
+      `<li><span>${escapeHtml(it.name)}</span><span class="item-qty">${it.qty}個</span></li>`
+    ).join('');
+    card.innerHTML = `
+      <div class="top-row">
+        <span class="room">部屋 ${escapeHtml(order.room)}</span>
+        <span class="time">${formatTime(order.createdAt)}</span>
+      </div>
+      <ul class="item-list">${itemsHtml}</ul>
+      <div class="action-row">
+        <button class="btn-done" data-id="${order.id}" data-status="done">制作完了</button>
+        <button class="btn-shortage" data-id="${order.id}" data-status="shortage">食材不足</button>
+      </div>
+    `;
+    pendingList.appendChild(card);
+    card.querySelector('.btn-done').addEventListener('click', () => resolveOrder(order.id, 'done'));
+    card.querySelector('.btn-shortage').addEventListener('click', () => resolveOrder(order.id, 'shortage'));
+  });
+}
+
+function renderLog() {
+  const logList = document.getElementById('logList');
+  const logEmptyMsg = document.getElementById('logEmptyMsg');
+  const log = (dataState.log || []).slice().sort((a, b) => new Date(b.resolvedAt) - new Date(a.resolvedAt));
+
+  logList.innerHTML = '';
+  if (log.length === 0) {
+    logEmptyMsg.style.display = 'block';
+    return;
+  }
+  logEmptyMsg.style.display = 'none';
+
+  log.forEach(entry => {
+    const card = document.createElement('div');
+    card.className = 'log-card';
+    const itemsText = entry.items.map(it => `${it.name} x${it.qty}`).join(', ');
+    const statusClass = entry.status === 'done' ? 'done' : 'shortage';
+    const statusLabel = entry.status === 'done' ? '制作完了' : '食材不足';
+    card.innerHTML = `
+      <div class="top-row">
+        <span class="room">部屋 ${escapeHtml(entry.room)}</span>
+        <span class="log-status ${statusClass}">${statusLabel}</span>
+      </div>
+      <div class="log-items">${escapeHtml(itemsText)}</div>
+      <div class="time" style="margin-top:4px;">${formatTime(entry.resolvedAt)}</div>
+    `;
+    logList.appendChild(card);
+  });
+}
+
+function updatePendingBadge() {
+  const badge = document.getElementById('pendingBadge');
+  const count = dataState.orders.filter(o => o.status === 'pending').length;
+  if (count > 0) {
+    badge.style.display = 'inline-block';
+    badge.textContent = count;
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+// ---------- アクション ----------
+
+document.getElementById('roomInput').addEventListener('input', () => {
+  document.getElementById('roomError').style.display = 'none';
+  updateSendBar();
+});
+
+document.getElementById('addProductBtn').addEventListener('click', async () => {
+  const nameInput = document.getElementById('nameInput');
+  const imgInput = document.getElementById('imgInput');
+  const maxInput = document.getElementById('maxInput');
+  const addError = document.getElementById('addError');
+
+  const name = nameInput.value.trim();
+  const image = imgInput.value.trim();
+  const maxQty = parseInt(maxInput.value, 10);
+
+  if (!name) {
+    addError.textContent = '商品名を入力してください';
+    addError.style.display = 'block';
+    return;
+  }
+  if (!maxQty || maxQty < 1) {
+    addError.textContent = '最大個数は1以上の数値を入力してください';
+    addError.style.display = 'block';
+    return;
+  }
+  addError.style.display = 'none';
+
+  const newProduct = { id: genId('p'), name, image, maxQty };
+  const ok = await saveData(d => { d.products.push(newProduct); });
+  if (ok) {
+    nameInput.value = '';
+    imgInput.value = '';
+    maxInput.value = '';
+    showToast('商品を追加しました');
+  }
+});
+
+document.getElementById('sendOrderBtn').addEventListener('click', async () => {
+  const roomInput = document.getElementById('roomInput');
+  const roomError = document.getElementById('roomError');
+  const room = roomInput.value.trim();
+
+  if (!room) {
+    roomError.textContent = '部屋番号を入力してください';
+    roomError.style.display = 'block';
+    return;
+  }
+  const items = dataState.products
+    .filter(p => (qtyState[p.id] || 0) > 0)
+    .map(p => ({ productId: p.id, name: p.name, qty: qtyState[p.id] }));
+
+  if (items.length === 0) return;
+
+  const order = {
+    id: genId('order'),
+    room,
+    items,
+    createdAt: new Date().toISOString(),
+    status: 'pending'
+  };
+
+  const ok = await saveData(d => { d.orders.push(order); });
+  if (ok) {
+    dataState.products.forEach(p => { qtyState[p.id] = 0; });
+    roomInput.value = '';
+    renderAll();
+    showToast(`部屋${room}の注文を送信しました`);
+  }
+});
+
+async function resolveOrder(orderId, status) {
+  const ok = await saveData(d => {
+    const order = d.orders.find(o => o.id === orderId);
+    if (!order) return;
+    order.status = status;
+    order.resolvedAt = new Date().toISOString();
+    if (!d.log) d.log = [];
+    d.log.unshift({
+      id: order.id,
+      room: order.room,
+      items: order.items,
+      createdAt: order.createdAt,
+      resolvedAt: order.resolvedAt,
+      status: status
+    });
+    d.log = d.log.slice(0, 300);
+    d.orders = d.orders.filter(o => o.id !== orderId);
+  });
+  if (ok) {
+    showToast(status === 'done' ? '制作完了にしました' : '食材不足にしました');
+  }
+}
+
+// ---------- モード切替 ----------
+
+function setMode(newMode) {
+  mode = newMode;
+  document.getElementById('modeOrderBtn').classList.toggle('active', mode === 'order');
+  document.getElementById('modeOpBtn').classList.toggle('active', mode === 'op');
+  document.getElementById('modeReceiveBtn').classList.toggle('active', mode === 'receive');
+  document.getElementById('orderMode').style.display = mode === 'order' ? 'block' : 'none';
+  document.getElementById('opMode').style.display = mode === 'op' ? 'block' : 'none';
+  document.getElementById('receiveMode').style.display = mode === 'receive' ? 'block' : 'none';
+  updateSendBar();
+  if (mode === 'order') {
+    resetIdleTimer();
+  } else {
+    stopIdleTimer();
+  }
+}
+
+document.getElementById('modeOrderBtn').addEventListener('click', () => setMode('order'));
+document.getElementById('modeOpBtn').addEventListener('click', () => setMode('op'));
+document.getElementById('modeReceiveBtn').addEventListener('click', () => setMode('receive'));
+
+document.getElementById('subtabPending').addEventListener('click', () => {
+  subview = 'pending';
+  document.getElementById('subtabPending').classList.add('active');
+  document.getElementById('subtabLog').classList.remove('active');
+  document.getElementById('pendingView').style.display = 'block';
+  document.getElementById('logView').style.display = 'none';
+});
+document.getElementById('subtabLog').addEventListener('click', () => {
+  subview = 'log';
+  document.getElementById('subtabLog').classList.add('active');
+  document.getElementById('subtabPending').classList.remove('active');
+  document.getElementById('pendingView').style.display = 'none';
+  document.getElementById('logView').style.display = 'block';
+});
+
+// ---------- 文字サイズ通知(無操作検知) ----------
+
+let idleTimer = null;
+const IDLE_MIN_MS = 30000;
+const IDLE_MAX_MS = 90000;
+
+function randomIdleDelay() {
+  return IDLE_MIN_MS + Math.random() * (IDLE_MAX_MS - IDLE_MIN_MS);
+}
+
+function resetIdleTimer() {
+  stopIdleTimer();
+  if (mode !== 'order') return;
+  idleTimer = setTimeout(() => {
+    showFontSizeToast();
+    resetIdleTimer();
+  }, randomIdleDelay());
+}
+
+function stopIdleTimer() {
+  if (idleTimer) {
+    clearTimeout(idleTimer);
+    idleTimer = null;
+  }
+}
+
+function showFontSizeToast() {
+  if (mode !== 'order') return;
+  const el = document.getElementById('fontsizeToast');
+  el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4500);
+}
+
+document.getElementById('fontsizeToastLink').addEventListener('click', (e) => {
+  e.preventDefault();
+  document.getElementById('fontsizeToast').classList.remove('show');
+  document.getElementById('displaySettingsModal').style.display = 'flex';
+});
+
+['click', 'touchstart', 'input', 'scroll'].forEach(evt => {
+  document.addEventListener(evt, () => {
+    if (mode === 'order') resetIdleTimer();
+  }, { passive: true });
+});
+
+// ---------- 初期化 ----------
+
+async function init() {
+  loadConfig();
+  loadDisplaySettings();
+  if (isConfigured()) {
+    updateSyncStatusLabel('接続確認中...');
+    const ok = await syncFromGithub();
+    if (ok) {
+      updateSyncStatusLabel();
+      renderAll();
+      startPolling();
+    } else {
+      updateSyncStatusLabel('接続失敗 - 運営設定を確認してください');
+      openOpSettingsModal();
+    }
+  } else {
+    openOpSettingsModal();
+  }
+  resetIdleTimer();
+}
+
+init();
+</script>
+
 </body>
 </html>
